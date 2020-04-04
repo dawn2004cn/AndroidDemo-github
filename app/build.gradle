@@ -1,0 +1,149 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'Java'
+android {
+    compileSdkVersion 28
+    buildToolsVersion "29.0.2"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    defaultConfig {
+        applicationId "com.noahedu.demo"
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+        multiDexEnabled true
+
+        ndk {
+            moduleName "libpersonhealth"
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles 'proguard.cfg'
+        }
+    }
+    sourceSets {
+        main {
+            /*manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']*/
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    lintOptions {
+        abortOnError true
+    }
+}
+////使用shadow插件打包，代替jar功能。
+/*jar {
+    manifest {  //incubating版本，以后版本可能会改API
+        attributes("Main-Class": "com.KafkaWordCount",
+                "Implementation-Title": "Gradle")
+    }
+    into('lib') {
+        from configurations.runtime
+    }
+}*/
+//解决冲突 同一版本
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '28.0.0'
+            }
+        }
+    }
+}
+dependencies {
+
+//    compile project(':library')
+
+    implementation project(':library')
+    implementation project(':VideoPlayModule')
+
+    //implementation fileTree(dir: 'libs', include: ['*.jar'])
+    /*implementation 'com.android.support:appcompat-v7:28.0.0'
+     androidTestImplementation('com.android.support:support-annotations:28.0.0') {
+         force = true
+     }
+     implementation 'com.android.support:support-compat:28.0.0'*/
+    implementation 'com.android.support:appcompat-v7:23.4.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    /*  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+     implementation 'com.blankj:utilcode:1.18.0'
+     implementation 'com.yanzhenjie.permission:support:2.0.1'
+     implementation 'com.jakewharton:butterknife:8.8.1'*/
+
+    implementation files('libs/aip-java-sdk-4.11.3.jar')
+    //compile files('libs/android-support-v13.jar')
+    implementation files('libs/android-support-v7-mediarouter.jar')
+    implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
+    implementation files('libs/jaudiotagger-2.2.6-SNAPSHOT.jar')
+    implementation files('libs/json-20160810.jar')
+    //implementation files('libs/Msc.jar')
+    implementation files('libs/musicg-1.4.2.0.jar')
+    //implementation files('libs/okhttp-3.8.1.jar')
+    implementation files('libs/slf4j-api-1.7.25.jar')
+    implementation files('libs/slf4j-simple-1.7.25.jar')
+    implementation files('libs/Sunflower.jar')
+    implementation files('libs/XiriFeedback.jar')
+    implementation files('libs/XiriScene.jar')
+    //implementation files('libs/gson-2.7.jar')
+    //小企鹅乐园
+    implementation files('libs/lib_vod_xqe_1.0.20191209.jar')
+
+
+    implementation files('libs/gson-2.8.5.jar')
+    implementation files('libs/adapter-rxjava2-2.5.0.jar')
+    implementation files('libs/converter-gson-2.5.0.jar')
+    implementation files('libs/rxandroid-2.1.1.jar')
+    implementation files('libs/rxjava-2.2.8.jar')
+    implementation files('libs/retrofit-2.5.0.jar')
+    implementation files('libs/okio-1.15.0.jar')
+    implementation files('libs/okhttp-3.12.0.jar')
+    implementation files('libs/reactive-streams-1.0.0.jar')
+    implementation files('libs/converter-scalars-2.6.0.jar')
+    implementation files('libs/klog.jar')
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation('com.google.android.exoplayer:exoplayer-core:2.10.4', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    })
+    implementation('com.google.android.exoplayer:exoplayer-smoothstreaming:2.10.4', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation('com.google.android.exoplayer:exoplayer-dash:2.10.4', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    })
+    implementation('com.google.android.exoplayer:exoplayer-hls:2.10.4', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    })
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+}
+
+/*task copyJars(type: Copy) {
+    from configurations.runtime
+    into 'lib' // 目标位置
+}*/

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="pager_margin">45dp</dimen>
+    <dimen name="page_margin">15dp</dimen>
+    <dimen name="dp_4">4dp</dimen>
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_60">60dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="search_view_margin_left">55dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="main__item_file_name_text_size">18sp</dimen>
+    <dimen name="main__item_downloaded_size_text_size">12sp</dimen>
+    <dimen name="main__item_total_size_text_size">12sp</dimen>
+    <dimen name="main__item_download_percent_text_size">12sp</dimen>
+    <dimen name="main__item_extra_text_text_size">12sp</dimen>
+    
+    <dimen name="main__item_layout_minHeight">100dp</dimen>
+</resources>

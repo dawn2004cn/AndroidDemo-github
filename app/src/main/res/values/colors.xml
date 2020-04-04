@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- drop down list header font color -->
+    <color name="drop_down_list_header_font_color">#A72309</color>
+    <!-- drop down list header second font color -->
+    <color name="drop_down_list_header_second_font_color">#729045</color>
+    <!-- drop down list footer font color -->
+    <color name="drop_down_list_footer_font_color">#5200D5</color>
+
+    <color name="dialog_bg">#bc000000</color>
+    
+    <color name="select_change_clarity_color">#bc000000</color>
+    
+    <color name="colorAccent">#bc000000</color>
+    
+    
+    
+    <color name="waveform_selected">#33b5e5</color>
+    <color name="waveform_unselected">#195a72</color>
+    <color name="waveform_unselected_bkgnd_overlay">#0a242d</color>
+    <color name="selection_border">#ffffff</color>
+    <color name="playback_indicator">#ffff66</color>
+    <color name="grid_line">#66ffffff</color>
+    <color name="timecode">#ddffffdd</color>
+    <color name="timecode_shadow">#aa000000</color>
+    <color name="type_bkgnd_alarm">#88880000</color>
+    <color name="type_bkgnd_ringtone">#88008888</color>
+    <color name="type_bkgnd_notification">#88666600</color>
+    <color name="type_bkgnd_music">#88000000</color>
+    <color name="type_bkgnd_unsupported">#88cccccc</color>
+    
+    
+    
+</resources>
