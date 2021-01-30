@@ -85,7 +85,6 @@ public class RecordService extends Service {
 
     public static void startRecording(Context context) {
         Intent intent = new Intent(context, RecordService.class);
-        intent.putExtra(ACTION_NAME, ACTION_START_RECORD);
         intent.putExtra(PARAM_PATH, getFilePath());
         context.startService(intent);
     }
@@ -212,6 +211,4 @@ public class RecordService extends Service {
         String fileName = String.format(Locale.getDefault(), "record_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
         return String.format(Locale.getDefault(), "%s%s%s", fileDir, fileName, currentConfig.getFormat().getExtension());
     }
-
-
 }

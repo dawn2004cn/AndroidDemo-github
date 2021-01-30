@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 import android.graphics.Color;
 
 /**
- * ɫ����Ч
+ * 色度特效
  * @author daizhj
  *
  */

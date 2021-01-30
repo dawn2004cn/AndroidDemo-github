@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 
 /**
- * �黨Ч��
+ * 碎花效果
  * @author daizhj
  *
  */

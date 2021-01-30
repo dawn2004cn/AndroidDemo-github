@@ -18,13 +18,15 @@ package jp.co.cyberagent.android.gpuimage;
 
 import android.annotation.SuppressLint;
 import android.opengl.GLES20;
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
 
 import static jp.co.cyberagent.android.gpuimage.GPUImageRenderer.CUBE;
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
@@ -34,8 +36,10 @@ import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE
  * other.
  */
 public class GPUImageFilterGroup extends GPUImageFilter {
-
+    final static String TAG = GPUImageFilterGroup.class.getSimpleName();
+    // 存储滤镜或者滤镜 group
     protected List<GPUImageFilter> mFilters;
+    // 存储单个滤镜
     protected List<GPUImageFilter> mMergedFilters;
     private int[] mFrameBuffers;
     private int[] mFrameBufferTextures;
@@ -107,14 +111,14 @@ public class GPUImageFilterGroup extends GPUImageFilter {
      */
     @Override
     public void onDestroy() {
-        destroyFramebuffers();
+        destroyFrameBuffers();
         for (GPUImageFilter filter : mFilters) {
             filter.destroy();
         }
         super.onDestroy();
     }
 
-    private void destroyFramebuffers() {
+    private void destroyFrameBuffers() {
         if (mFrameBufferTextures != null) {
             GLES20.glDeleteTextures(mFrameBufferTextures.length, mFrameBufferTextures, 0);
             mFrameBufferTextures = null;
@@ -135,16 +139,16 @@ public class GPUImageFilterGroup extends GPUImageFilter {
     public void onOutputSizeChanged(final int width, final int height) {
         super.onOutputSizeChanged(width, height);
         if (mFrameBuffers != null) {
-            destroyFramebuffers();
+            destroyFrameBuffers();
         }
 
-        int size = mFilters.size();
-        for (int i = 0; i < size; i++) {
+
+        for (int i = 0; i < mFilters.size(); i++) {
             mFilters.get(i).onOutputSizeChanged(width, height);
         }
 
         if (mMergedFilters != null && mMergedFilters.size() > 0) {
-            size = mMergedFilters.size();
+            int size = mMergedFilters.size();
             mFrameBuffers = new int[size - 1];
             mFrameBufferTextures = new int[size - 1];
 
@@ -226,6 +230,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         return mMergedFilters;
     }
 
+    // 遍历所有的滤镜（或者滤镜group）
     public void updateMergedFilters() {
         if (mFilters == null) {
             return;
@@ -238,6 +243,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
         }
 
         List<GPUImageFilter> filters;
+        // 遍历 filters，如果item 是 group 类型，则递归调用继续拆分。
         for (GPUImageFilter filter : mFilters) {
             if (filter instanceof GPUImageFilterGroup) {
                 ((GPUImageFilterGroup) filter).updateMergedFilters();
@@ -247,6 +253,7 @@ public class GPUImageFilterGroup extends GPUImageFilter {
                 mMergedFilters.addAll(filters);
                 continue;
             }
+            // 非 group 类型滤镜直接添加到 mergedFilters 列表中。
             mMergedFilters.add(filter);
         }
     }

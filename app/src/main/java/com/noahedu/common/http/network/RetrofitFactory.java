@@ -2,6 +2,7 @@ package com.noahedu.common.http.network;
 
 import android.content.Context;
 
+import android.util.ArrayMap;
 import com.noahedu.common.http.util.OkHttpsUtil;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import javax.net.ssl.X509TrustManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
@@ -32,11 +34,41 @@ public class RetrofitFactory {
     private X509TrustManager trustManager;
     private HostnameVerifier hostnameVerifier;
     private static Context mContext;
+    private Map<String, Retrofit> retrofitMap;
+    private OkHttpClient okHttpClient;
+
+    static class Single{
+        static RetrofitFactory Instance = new RetrofitFactory();
+    }
 
     public static void setmContext(Context context){
         mContext = context;
     }
 
+    private RetrofitFactory(){
+        retrofitMap = new ArrayMap<>();
+
+        // 对 OkHttpClient 做一些设置
+        okHttpClient = new OkHttpClient().newBuilder().build();
+    }
+
+    public static RetrofitFactory getInstance(){
+        return RetrofitFactory.Single.Instance;
+    }
+
+    public Retrofit getRetrofit(String baseUrl) {
+        Retrofit retrofit = retrofitMap.get(baseUrl);
+        if(retrofit == null){
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+            retrofitMap.put(baseUrl, retrofit);
+        }
+        return retrofit;
+    }
 
     public RetrofitFactory(Builder builder) {
         this.headMap.clear();
@@ -61,11 +93,10 @@ public class RetrofitFactory {
         return retrofit;
     }
 
-
     private OkHttpClient getOkHttpClient() {
         OkHttpClient client = null;
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        OkHttpsUtil.toHttps(mContext,builder);
+        //OkHttpsUtil.toHttps(mContext,builder);
         if (socketFactory == null) {
             client = builder
                     .addInterceptor(new LogInterceptor())

@@ -29,9 +29,11 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.noahedu.common.util.DesityUtils;
 import com.noahedu.demo.R;
 import com.noahedu.gpuimage.GPUImageFilterTools;
 import com.noahedu.gpuimage.utils.CameraHelper;
@@ -46,14 +48,20 @@ import java.util.Date;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImage.OnPictureSavedListener;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageFilterGroup;
+import jp.co.cyberagent.android.gpuimage.GPUImageMovieWriter;
 
 public class ActivityCamera extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
+    final public static String TAG = ActivityCamera.class.getSimpleName();
     private GPUImage mGPUImage;
     private CameraHelper mCameraHelper;
     private CameraLoader mCamera;
     private GPUImageFilter mFilter;
     private GPUImageFilterTools.FilterAdjuster mFilterAdjuster;
+    private GPUImageMovieWriter mMovieWriter;
+
+    private boolean mIsRecording = false;
 
 
     @Override
@@ -63,9 +71,13 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         ((SeekBar) findViewById(R.id.seekBar)).setOnSeekBarChangeListener(this);
         findViewById(R.id.button_choose_filter).setOnClickListener(this);
         findViewById(R.id.button_capture).setOnClickListener(this);
+        findViewById(R.id.button_video).setOnClickListener(this);
 
         mGPUImage = new GPUImage(this);
         mGPUImage.setGLSurfaceView((GLSurfaceView) findViewById(R.id.surfaceView));
+
+        mMovieWriter = new GPUImageMovieWriter();
+        mGPUImage.setFilter(mMovieWriter);
 
         mCameraHelper = new CameraHelper(this);
         mCamera = new CameraLoader();
@@ -87,6 +99,10 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
     protected void onPause() {
         mCamera.onPause();
         super.onPause();
+
+        if (mIsRecording) {
+            mMovieWriter.stopRecording();
+        }
     }
 
     @Override
@@ -116,10 +132,28 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                     });
                 }
                 break;
+            case R.id.button_video:
+                onClickRecord((Button)v);
+                break;
 
             case R.id.img_switch_camera:
                 mCamera.switchCamera();
                 break;
+        }
+    }
+
+    private void onClickRecord(Button btn) {
+        if (mIsRecording) {
+            // go to stop recording
+            mIsRecording = false;
+            mMovieWriter.stopRecording();
+            btn.setText("Start Record");
+        } else {
+            // go to start recording
+            mIsRecording = true;
+            File recordFile = getOutputMediaFile(MEDIA_TYPE_VIDEO);
+            mMovieWriter.startRecording(recordFile.getAbsolutePath(), DesityUtils.getScreenWidth(this), DesityUtils.getScreenHeight(this));
+            btn.setText("Stop Record");
         }
     }
 
@@ -129,7 +163,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         params.setRotation(90);
         mCamera.mCameraInstance.setParameters(params);
         for (Camera.Size size : params.getSupportedPictureSizes()) {
-            Log.i("ASDF", "Supported: " + size.width + "x" + size.height);
+            Log.i(TAG, "Supported: " + size.width + "x" + size.height);
         }
         mCamera.mCameraInstance.takePicture(null, null,
                 new Camera.PictureCallback() {
@@ -139,7 +173,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
 
                         final File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
                         if (pictureFile == null) {
-                            Log.d("ASDF",
+                            Log.d(TAG,
                                     "Error creating media file, check storage permissions");
                             return;
                         }
@@ -149,9 +183,9 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
                             fos.write(data);
                             fos.close();
                         } catch (FileNotFoundException e) {
-                            Log.d("ASDF", "File not found: " + e.getMessage());
+                            Log.d(TAG, "File not found: " + e.getMessage());
                         } catch (IOException e) {
-                            Log.d("ASDF", "Error accessing file: " + e.getMessage());
+                            Log.d(TAG, "Error accessing file: " + e.getMessage());
                         }
 
                         data = null;
@@ -190,7 +224,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d(TAG, "failed to create directory");
                 return null;
             }
         }
@@ -207,7 +241,7 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         } else {
             return null;
         }
-
+        Log.v(TAG,"mediaFile:"+mediaFile);
         return mediaFile;
     }
 
@@ -215,7 +249,12 @@ public class ActivityCamera extends Activity implements OnSeekBarChangeListener,
         if (mFilter == null
                 || (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
             mFilter = filter;
-            mGPUImage.setFilter(mFilter);
+            GPUImageFilterGroup filters = new GPUImageFilterGroup();
+            filters.addFilter(mFilter);
+            filters.addFilter(mMovieWriter);
+
+            mGPUImage.setFilter(filters);
+
             mFilterAdjuster = new GPUImageFilterTools.FilterAdjuster(mFilter);
         }
     }

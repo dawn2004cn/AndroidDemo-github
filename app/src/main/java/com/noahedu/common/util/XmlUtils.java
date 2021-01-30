@@ -228,7 +228,7 @@ public class XmlUtils {
                         break;
                     case XmlPullParser.END_TAG:// 结束标记
                         String nameTag = parser.getName();
-                        System.out.println("XML文件名称：服务器定义名称>" + nameTag);
+                        LogUtils.v("XML文件名称：服务器定义名称>" + nameTag);
                         for (int i = 0; i < xmlLabel.size(); i++) {
                             XmlLabelData xmlLabelData = xmlLabel.get(i);
                             String label = xmlLabelData.getXmlLabel();

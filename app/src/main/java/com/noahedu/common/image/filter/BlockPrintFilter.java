@@ -23,7 +23,7 @@ import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 
 
 /**
- * �滭Ч��
+ * 版画效果
  * @author daizhj
  *
  */

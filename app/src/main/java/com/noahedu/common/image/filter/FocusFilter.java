@@ -20,7 +20,7 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * ����Ч��
+ * 焦点效果
  * @author daizhj
  *
  */

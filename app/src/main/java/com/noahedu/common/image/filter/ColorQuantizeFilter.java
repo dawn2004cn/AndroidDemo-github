@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ��ɫ������Ч
+ * 颜色量化特效
  * @author daizhj
  */
 public class ColorQuantizeFilter implements IImageFilter{

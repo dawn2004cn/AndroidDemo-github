@@ -70,7 +70,7 @@ public class ImageSDCardCache extends PreloadDataCache<String, String> {
 
     private static final long                    serialVersionUID     = 1L;
 
-    private static final String                  TAG                  = "ImageSDCardCache";
+    private static final String                  TAG                  = ImageSDCardCache.class.getSimpleName();
 
     /** callback interface after image get success **/
     private OnImageSDCallbackListener            onImageSDCallbackListener;

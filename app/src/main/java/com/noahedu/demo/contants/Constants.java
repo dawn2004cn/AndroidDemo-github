@@ -11,4 +11,6 @@ package com.noahedu.demo.contants;
  */
 public class Constants {
     final public static String GET_TENCENT_VIDEO =  "get_tencent_video";
+    final public static String ROBO_SYS_LOGIN =  "robo_sys_login";
+    final public static String ROBO_SYS_GET_COURSE =  "robo_sys_get_course";
 }

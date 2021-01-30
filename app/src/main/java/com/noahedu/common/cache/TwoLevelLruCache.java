@@ -25,7 +25,7 @@ import java.util.Map;
 import com.noahedu.common.cache.DiskLruCache.Editor;
 import com.noahedu.common.cache.DiskLruCache.Snapshot;
 import com.noahedu.common.util.IOUtils;
-
+import com.noahedu.common.util.LogUtils;
 
 
 /**
@@ -155,13 +155,13 @@ public class TwoLevelLruCache<V> {
                     value = mConverter.from(bytes);
                 }
             } catch (IOException e) {
-                System.out.println("Unable to get entry from disk cache. key: "
+                LogUtils.v("Unable to get entry from disk cache. key: "
                         + key);
             } catch (Exception e) {
-                System.out.println("Unable to get entry from disk cache. key: "
+                LogUtils.v("Unable to get entry from disk cache. key: "
                         + key);
             } catch (OutOfMemoryError e) {
-                System.out.println("Unable to get entry from disk cache. key: "
+                LogUtils.v("Unable to get entry from disk cache. key: "
                     + key);
             } finally {
                 IOUtils.closeQuietly(in);
@@ -195,7 +195,7 @@ public class TwoLevelLruCache<V> {
         try {
             mDiskCache.remove(key);
         } catch (IOException e) {
-            System.out.println("Unable to remove entry from disk cache. key: "
+            LogUtils.v("Unable to remove entry from disk cache. key: "
                     + key);
         }
     }
@@ -224,8 +224,7 @@ public class TwoLevelLruCache<V> {
                 editor.commit();
             }
         } catch (IOException e) {
-            System.out
-                    .println("Unable to put entry to disk cache. key: " + key);
+            LogUtils.v("Unable to put entry to disk cache. key: " + key);
         } finally {
             IOUtils.closeQuietly(out);
             quietlyAbortUnlessCommitted(editor);

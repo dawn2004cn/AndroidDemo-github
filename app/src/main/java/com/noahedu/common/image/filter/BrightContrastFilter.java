@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * �����Աȶ���Ч
+ * 高亮对比度特效
  * @author daizhj
  *
  */

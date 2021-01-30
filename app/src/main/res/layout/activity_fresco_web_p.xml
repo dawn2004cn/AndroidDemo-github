@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.noahedu.animation.FrescoWebPActivity">
+    <com.noahedu.animation.AnimationImageView
+        android:id="@+id/fresco_sequence_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/group"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:id="@+id/group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="assets"
+            android:layout_weight="1"
+            android:onClick="loadFromAssets"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="resource"
+            android:layout_weight="1"
+            android:onClick="loadFromDrawable"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="drawable"
+            android:layout_weight="1"
+            android:onClick="loadFromInputStream"/>
+    </LinearLayout>
+</RelativeLayout>

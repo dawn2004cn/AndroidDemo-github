@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * �Զ�У��Ч��
+ * 自动校正效果
  * @author daizhj
  *
  */

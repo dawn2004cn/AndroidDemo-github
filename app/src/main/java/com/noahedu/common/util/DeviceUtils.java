@@ -327,4 +327,43 @@ public class DeviceUtils {
     	
         return productID_;
     }
+
+    /**
+     * Returns the current device.
+     * load <uses-library android:name="com.noahedu" />
+     */
+    public static String getProductName() {
+        String productName_ = null;
+        if(productName_ == null)
+        {
+            try {
+                final Class<?> cls = Class.forName(COM_NOAHEDU_SYSTEM_NAME);
+                final Method isInitializedMethod = cls.getMethod("getProductName", (Class[]) null);
+                Object result = null;
+                try {
+                    result = isInitializedMethod.invoke(null, (Object[]) null);
+                } catch (IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                if (result instanceof String) {
+                    productName_ = (String) result;
+                }
+            }
+            catch (ClassNotFoundException ignored) {
+                ignored.printStackTrace();
+            }
+            catch (NoSuchMethodException ignored) {
+                ignored.printStackTrace();
+            }
+            catch (InvocationTargetException ignored) {
+                ignored.printStackTrace();
+            }
+        }
+
+        return productName_;
+    }
 }

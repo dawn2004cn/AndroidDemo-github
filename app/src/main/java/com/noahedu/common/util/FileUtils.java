@@ -1,19 +1,20 @@
 package com.noahedu.common.util;
 
+import android.os.Environment;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.os.Environment;
 
 /**
  * File Utils
@@ -40,6 +41,7 @@ import android.os.Environment;
  * @author <a href="http://www.trinea.cn" target="_blank">Trinea</a> 2012-5-12
  */
 public class FileUtils {
+    public final static String TAG = FileUtils.class.getSimpleName();
 
     public final static String FILE_EXTENSION_SEPARATOR = ".";
 
@@ -494,17 +496,90 @@ public class FileUtils {
                 int length;
                 while ( (byteread = inStream.read(buffer)) != -1) {
                     bytesum += byteread; //字节数 文件大小
-                    System.out.println(bytesum);
+                    LogUtils.v(bytesum+"");
                     fs.write(buffer, 0, byteread);
                 }
                 inStream.close();
             }
         }
         catch (Exception e) {
-            System.out.println("复制单个文件操作出错");
+            LogUtils.v("复制单个文件操作出错");
             e.printStackTrace();
 
         }
     }
+
+    /**
+     * 获取目录下所有文件
+     * @param path 指定目录路径
+     * @return
+     */
+    public static List<String> getFilesAllName(String path,String suffix) {
+        File file=new File(path);
+        FilenameFilter fileNameFilter = new FileUtils.BinFileNameFilter(suffix);
+        File[] files=file.listFiles(fileNameFilter);
+        if (files == null){
+            LogUtils.v("open listFiles is null");
+            return null;
+        }
+        List<String> s = new ArrayList<>();
+        for(int i =0;i<files.length;i++){
+            s.add(files[i].getAbsolutePath());
+            LogUtils.v(files[i].getAbsolutePath());
+
+        }
+        return s;
+    }
+    static class BinFileNameFilter implements FilenameFilter {
+        private String filterRule = ".bin";
+
+        public BinFileNameFilter(String regex) {
+            //pattern = Pattern.compile(regex);
+            this.filterRule = regex;
+        }
+
+        @Override
+        public boolean accept(File dir, String name) {
+            if(name.lastIndexOf('.')>0)
+            {
+                // get last index for '.' char
+                int lastIndex = name.lastIndexOf('.');
+
+                // get extension
+                String str = name.substring(lastIndex);
+
+                LogUtils.v("extension:"+str);
+                // match path name extension
+                if(str.equals(this.filterRule))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public String getDescription() {
+            return "*.bin";
+        }
+    }
+
+/*    //新建ArrayList
+    List<String> list = new ArrayList<>();
+//获取指定路径下的所有文件
+    list = Utils.getFilesAllName(YOUR_PATH);
+if(list != null){
+        for(String listname : list ){
+            Log.e("TAG","listname :"+listname );
+            //判断文件是不是MP4后缀
+            if(listname .endsWith(".mp4")){
+                //获取路径下最后一个‘/’后的坐标
+                int lastindex = listname .lastIndexOf("/");
+                //获取具体文件名称
+                String name= listname .substring(lastindex+1,listname .length());
+                //获取到想要的名称后，去干你想干的事
+                //dosomething
+            }
+        }
+    }*/
    
 }

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="id.co.hijr.app.dao.UserDao">
+
+	<resultMap type="user" id="userMap" extends="id.co.hijr.app.core.Metadata.metadataMap">
+	    <!-- Always put mapping for id with format #resultMapType_id (e.g. user_id) -->
+	    <id column="user_id" property="id" />	      
+		<result column="real_name" property="name"/>
+		<result column="user_name" property="username"/>
+		<result column="password" property="password"/>
+		<result column="description" property="description"/>
+		<result column="token" property="token" />
+		<result column="expired" property="expired" 
+		    typeHandler="id.co.hijr.app.core.DateTimeTypeHandler"/>
+	</resultMap>
+	
+	<resultMap type="user" id="userMapExtended" extends="userMap">
+		<association property="role" resultMap="id.co.hijr.app.dao.RoleDao.roleMap"/>
+	</resultMap>
+	
+	<select id="countTrash" resultType="int" >
+		select count(*) as count from tbl_user where date_deleted is not null
+	</select>
+	
+	<!-- Hitung jumlah record -->
+	<select id="count" resultType="int" >
+		select count(*) as count from tbl_user
+	</select>
+	
+	<!-- Ngambil ID baru untuk calon record -->
+	<select id="newid" resultType="int" >
+		select ifnull(max(user_id)+1,1) as newid from tbl_user
+	</select>
+	
+	<!-- Query utama select data -->
+	<sql id="qry">
+		select 
+			user_id, real_name, user_name, password, a.description, token, expired,
+			role_id, role_name,
+			
+			a.date_added,a.user_added,a.date_modified,a.user_modified,a.date_deleted,a.user_deleted
+			
+		from tbl_user a inner join tbl_role b on a.role=b.role_id
+	</sql>
+	
+	<select id="list" resultMap="userMapExtended" parameterType="map">
+		select * from (
+		select *, (select count(*) from (<include refid="qry"/>)) as rownum from (<include refid="qry"/>)
+		<if test="filter != null">
+			<foreach  collection="filter"  index="key" item="clause"  open=" where "  separator=" and "  close="">
+		         ${clause.column} ${clause.operator} #{clause.value} 
+		    </foreach>
+	    </if>
+		) as tmp where date_deleted is null
+		<if test="order != null">
+			ORDER BY ${order}
+		</if>
+		
+		${limit} ${offset} 
+	</select>
+	
+	<!-- Fungsi insert biasa -->
+	<insert id="add" parameterType="user">
+		insert into tbl_user
+		(user_id,real_name,user_name,password,description,token,expired, role <include refid="id.co.hijr.app.core.Metadata.field"/>) 
+		values 
+		(#{id:NUMERIC},#{name:VARCHAR},#{username:VARCHAR},#{password:VARCHAR},#{description:VARCHAR},
+		#{token:VARCHAR},#{expired:VARCHAR,typeHandler=id.co.hijr.app.core.DateTimeTypeHandler},#{role.id:NUMERIC}
+		<include refid="id.co.hijr.app.core.Metadata.value"/>)
+	</insert>
+	
+	<!-- Mengubah status record/data menjadi deleted -->
+	<delete id="delete" parameterType="int">
+		update tbl_user set 
+		<include refid="id.co.hijr.app.core.Metadata.delete"/>
+		where user_id=#{id}
+	</delete>
+
+	<!-- Menghapus permanent record/data dari database -->
+	<delete id="deletePermanent" parameterType="int">
+		delete from tbl_user where user_id=#{id}
+	</delete>
+
+	<!-- Mengembalikan record/data yang status deleted menjadi visible -->
+	<delete id="restore" parameterType="int">
+		update tbl_user set 
+		<include refid="id.co.hijr.app.core.Metadata.restore"/>
+		where user_id=#{id}
+	</delete>	
+	
+	<!-- Fungsi update biasa -->
+	<update id="update" parameterType="user">
+		update tbl_user set 
+			<include refid="id.co.hijr.app.core.Metadata.update"/>
+			real_name=#{name:VARCHAR}, 
+			user_name=#{user_name:VARCHAR},
+			<!-- password=#{password:VARCHAR}, --> 
+			description=#{description:VARCHAR}, 
+			token=#{token:VARCHAR}, 
+			expired=#{expired:VARCHAR,typeHandler=id.co.hijr.app.core.DateTimeTypeHandler},
+			role=#{role.id:NUMERIC}
+		where user_id=#{id}
+	</update>
+	
+	<!-- Ngambil satu object tertentu berdasarkan ID -->
+	<select id="get" resultMap="userMapExtended" parameterType="int">
+		select * from (<include refid="qry"/>) where user_id=#{id}
+	</select>
+	
+	<!-- Menghapus permanent data yang statusnya deleted -->
+	<delete id="clean">
+		delete from tbl_user where date_deleted is not null
+	</delete>
+	
+	<!-- Mengosongkan isi tabel (semua data) -->
+	<delete id="empty">
+	    delete from tbl_user
+	</delete>	
+	
+	<!-- you can add custom SQL here -->
+	
+	<update id="updatePassword" parameterType="user">
+		update tbl_user set 
+			<include refid="id.co.hijr.app.core.Metadata.update"/> 
+			token=#{token:VARCHAR}, 
+			password=#{password:VARCHAR}
+		where user_id=#{id}
+	</update>	
+
+	<select id="listTestCustomQuery" resultMap="userMap" parameterType="map">
+		select user_id, user_name, password from tbl_user
+	</select>
+	
+</mapper>	

@@ -20,7 +20,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ɫ�ɱ��Ͷ���Ч
+ * 色采饱和度特效
  * @author daizhj
  *
  */

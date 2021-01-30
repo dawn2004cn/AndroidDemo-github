@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
@@ -39,22 +40,31 @@ import android.provider.MediaStore;
 import android.view.Display;
 import android.view.WindowManager;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+
+import jp.co.cyberagent.android.gpuimage.view.GLTextureView;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
  */
 public class GPUImage {
+    static final int SURFACE_TYPE_SURFACE_VIEW = 0;
+    static final int SURFACE_TYPE_TEXTURE_VIEW = 1;
     private final Context mContext;
     private final GPUImageRenderer mRenderer;
     private GLSurfaceView mGlSurfaceView;
+    private GLTextureView mGlTextureView;
     private GPUImageFilter mFilter;
     private Bitmap mCurrentBitmap;
     private ScaleType mScaleType = ScaleType.CENTER_CROP;
+    private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
 
     /**
      * Instantiates a new GPUImage object.
@@ -91,6 +101,7 @@ public class GPUImage {
      * @param view the GLSurfaceView
      */
     public void setGLSurfaceView(final GLSurfaceView view) {
+        surfaceType = SURFACE_TYPE_SURFACE_VIEW;
         mGlSurfaceView = view;
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
@@ -98,6 +109,22 @@ public class GPUImage {
         mGlSurfaceView.setRenderer(mRenderer);
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         mGlSurfaceView.requestRender();
+    }
+
+    /**
+     * Sets the GLTextureView which will display the preview.
+     *
+     * @param view the GLTextureView
+     */
+    public void setGLTextureView(final GLTextureView view) {
+        surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
+        mGlTextureView = view;
+        mGlTextureView.setEGLContextClientVersion(2);
+        mGlTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        mGlTextureView.setOpaque(false);
+        mGlTextureView.setRenderer(mRenderer);
+        mGlTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        mGlTextureView.requestRender();
     }
 
     /**
@@ -111,12 +138,23 @@ public class GPUImage {
         mRenderer.setBackgroundColor(red, green, blue);
     }
 
+    public void setBackgroundColor(int color) {
+        mRenderer.setBackgroundColor(Color.red(color), Color.green(color), Color.blue(color));
+    }
+
     /**
      * Request the preview to be rendered again.
      */
     public void requestRender() {
-        if (mGlSurfaceView != null) {
-            mGlSurfaceView.requestRender();
+        if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW){
+            if (mGlTextureView != null) {
+                mGlTextureView.requestRender();
+            }
+        }
+        else if (surfaceType == SURFACE_TYPE_SURFACE_VIEW){
+            if (mGlSurfaceView != null) {
+                mGlSurfaceView.requestRender();
+            }
         }
     }
 
@@ -139,7 +177,11 @@ public class GPUImage {
      */
     public void setUpCamera(final Camera camera, final int degrees, final boolean flipHorizontal,
             final boolean flipVertical) {
-        mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
+            mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        }else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            mGlTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             setUpCameraGingerbread(camera);
         } else {
@@ -201,6 +243,10 @@ public class GPUImage {
         mRenderer.deleteImage();
         mCurrentBitmap = null;
         requestRender();
+    }
+
+    public ScaleType getScaleType() {
+        return mScaleType;
     }
 
     /**
@@ -428,6 +474,16 @@ public class GPUImage {
         }
     }
 
+    @Override
+    public GPUImage clone() {
+        GPUImage gpuImage = new GPUImage(mContext);
+        gpuImage.setScaleType(mScaleType);
+        gpuImage.setRotation(mRenderer.getRotation(), mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
+        gpuImage.setBackgroundColor(mRenderer.getBackgroundRed(), mRenderer.getBackgroundGreen(), mRenderer.getBackgroundBlue());
+        gpuImage.setImage(mCurrentBitmap);
+        return gpuImage;
+    }
+
     @Deprecated
     private class SaveTask extends AsyncTask<Void, Void, Void> {
 
@@ -503,6 +559,8 @@ public class GPUImage {
                 InputStream inputStream;
                 if (mUri.getScheme().startsWith("http") || mUri.getScheme().startsWith("https")) {
                     inputStream = new URL(mUri.toString()).openStream();
+                } else if (mUri.getPath().startsWith("/android_asset/")) {
+                    inputStream = mContext.getAssets().open(mUri.getPath().substring(("/android_asset/").length()));
                 } else {
                     inputStream = mContext.getContentResolver().openInputStream(mUri);
                 }
@@ -714,4 +772,8 @@ public class GPUImage {
     }
 
     public enum ScaleType { CENTER_INSIDE, CENTER_CROP }
+
+    public GPUImageRenderer getRenderer() {
+        return mRenderer;
+    }
 }

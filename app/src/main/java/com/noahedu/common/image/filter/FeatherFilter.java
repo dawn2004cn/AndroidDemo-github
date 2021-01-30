@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ��Ч��
+ * 羽化效果
  * @author daizhj
  *
  */

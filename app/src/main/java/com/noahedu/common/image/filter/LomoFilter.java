@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 
 /**
- * lomoЧ��
+ * lomo效果
  * @author daizhj
  *
  */

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Trinea Android Demo</string>
+    <string name="app_name">Android Demo</string>
     
     <string name="imagesdcardcache_demo_activity_title">ImageSDCardCache Demo</string>
     <string name="imagecache_demo_activity_title">ImageCache Demo</string>
@@ -62,9 +62,11 @@
     <string name="desc_image_filter">Image filter Usage</string>
     <string name="desc_Load_image_View">load Image Usage</string>
     <string name="desc_Download_File_View">download file Usage</string>
-    <string name="desc_sudokupuzzle_View">sudokupuzzle webviw Usage</string>
+    <string name="desc_audiorecorder_View">audio recorder view Usage</string>
+    <string name="desc_sudokupuzzle_View">sudokupuzzle webview Usage</string>
+    <string name="desc_class_View">class list Usage</string>
+    <string name="desc_Ding_View">Ding list Usage</string>
     <string name="desc_default">Trinea</string>
-    
     
     
     <string name="main__please_input_download_file">Please enter the url of the download file</string>
@@ -161,4 +163,5 @@
     <string name="application_name">ExoPlayer</string>
 
     <string name="track_selection_title">Select tracks</string>
+    <string name="hello_world">Hello world</string>
 </resources>

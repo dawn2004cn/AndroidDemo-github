@@ -26,8 +26,10 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
+import com.noahedu.common.filedownloader.base.Log;
 import com.noahedu.demo.R;
 import com.noahedu.gpuimage.GPUImageFilterTools;
+import com.noahedu.gpuimage.utils.SelectMediaUtils;
 
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
@@ -35,6 +37,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImageView.OnPictureSavedListener;
 
 public class ActivityGallery extends Activity implements OnSeekBarChangeListener,
         OnClickListener, OnPictureSavedListener {
+    private final String TAG = ActivityGallery.class.getSimpleName();
 
     private static final int REQUEST_PICK_IMAGE = 1;
     private GPUImageFilter mFilter;
@@ -71,6 +74,7 @@ public class ActivityGallery extends Activity implements OnSeekBarChangeListener
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
+        Log.v(TAG,"requestCode:"+requestCode+"resultCode:"+resultCode+"data:"+ ((data != null)?data.getAction()+data.toString():"NULL"));
     }
 
     @Override

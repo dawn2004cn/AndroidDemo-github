@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0EC5A5"
+    android:orientation="vertical"
+    tools:ignore="MissingDefaultResource">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="SUDOKU"
+        android:textColor="@android:color/white"
+        android:textSize="30sp" />
+
+    <com.noahedu.game.GameView
+        android:id="@+id/game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:layout_width="0dp"
+            android:onClick="rePay"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:text="重新开始"
+            android:textColor="@android:color/white"/>
+
+        <!--android:background="@drawable/radius_border_gray"-->
+        <Button
+            android:onClick="newPay"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="再来一局"
+            android:textColor="@android:color/white"/>
+        <!--android:background="@drawable/radius_border_gray"-->
+    </LinearLayout>
+
+</LinearLayout>

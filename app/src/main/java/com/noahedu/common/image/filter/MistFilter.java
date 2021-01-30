@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ��Ч��
+ * 雾化效果
  * @author daizhj
  *
  */
@@ -34,7 +34,7 @@ public class MistFilter implements IImageFilter{
        for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
             	  int k = NoiseFilter.getRandomInt(1, 123456);
-            	  //���ؿ��С
+            	  //像素块大小
             	  int dx = x + k % 19;
             	  int dy = y + k % 19;
             	  if(dx >= width) {

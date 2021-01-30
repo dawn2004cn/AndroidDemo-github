@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class MD5Utils {
 
-    private static final String TAG = "MD5Utils";
+    private static final String TAG = MD5Utils.class.getSimpleName();
 
     /**
      * md5加密

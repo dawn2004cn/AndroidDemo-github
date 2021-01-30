@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ��ֵ��Ч
+ * 阈值特效
  * @author daizhj
  *
  */

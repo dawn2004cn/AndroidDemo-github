@@ -102,12 +102,6 @@ public class HttpsUtil {
 
     private InputStream getCertificatesInputStream() {
 //            // 使用xca生成的证书
-//            String[] certs = CertGetter.getCrt();
-//            Buffer buffer = new Buffer();
-//            for (String cert : certs) {
-//                buffer.writeUtf8(cert);
-//            }
-//            return buffer.inputStream();
         try {
             InputStream input = context.getResources().getAssets().open(SERVER_CRT);
             return input;

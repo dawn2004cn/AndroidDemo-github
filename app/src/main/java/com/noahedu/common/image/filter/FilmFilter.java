@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 
 /**
- * ��ӰԺЧ��
+ * 电影院效果
  * @author daizhj
  *
  */

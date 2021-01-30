@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.noahedu.common.util.LogUtils;
 import com.noahedu.demo.R;
 import com.noahedu.wavelibrary.utils.SoundFile;
 
@@ -495,7 +496,7 @@ public class WaveformView extends View {
 
         // Level 0 is doubled, with interpolated values
         mLenByZoomLevel[0] = numFrames * 2;
-        System.out.println("ssnum"+numFrames);
+        LogUtils.v("ssnum"+numFrames);
         mZoomFactorByZoomLevel[0] = 2.0;
         mValuesByZoomLevel[0] = new double[mLenByZoomLevel[0]];
         if (numFrames > 0) {

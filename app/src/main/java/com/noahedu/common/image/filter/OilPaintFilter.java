@@ -20,7 +20,7 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * �ͻ�Ч��
+ * 油画效果
  * @author daizhj
  *
  */

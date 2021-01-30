@@ -417,8 +417,8 @@ public class ImageUtils {
 		return output;
 
 	}
-	
-	Bitmap mirrorImage(Bitmap picture,Boolean flag)
+
+	public static Bitmap mirrorImage(Bitmap picture,Boolean flag)
 	{
 		Matrix m = new Matrix(); 
 		if (flag) 

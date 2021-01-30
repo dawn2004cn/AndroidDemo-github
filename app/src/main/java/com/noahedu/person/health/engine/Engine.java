@@ -1,8 +1,14 @@
 package com.noahedu.person.health.engine;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -62,6 +68,41 @@ public class Engine {
 
         return bitmap;
     }
+
+
+	public static String getSignMd5Str(Context context) {
+		try {
+			@SuppressLint("PackageManagerGetSignatures")
+			PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+			Signature[] signs = packageInfo.signatures;
+			Signature sign = signs[0];
+			return encryptionMD5(sign.toByteArray());
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public static String encryptionMD5(byte[] byteStr) {
+		MessageDigest messageDigest = null;
+		StringBuilder md5StrBuff = new StringBuilder();
+		try {
+			messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest.reset();
+			messageDigest.update(byteStr);
+			byte[] byteArray = messageDigest.digest();
+			for (byte aByteArray : byteArray) {
+				if (Integer.toHexString(0xFF & aByteArray).length() == 1) {
+					md5StrBuff.append("0").append(Integer.toHexString(0xFF & aByteArray));
+				} else {
+					md5StrBuff.append(Integer.toHexString(0xFF & aByteArray));
+				}
+			}
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return md5StrBuff.toString().toUpperCase();
+	}
     /**
      * path为人格健康建议库的地址
      * 返回 hd 为nativeOpenPackages 打开的句柄
@@ -83,5 +124,10 @@ public class Engine {
      * addr为content item 的logoAddr
      * **/
     public static native byte[] nativeGetPictureInfo(int hd,String cachefile,int logoAddr);//根据地址获取图片
+
+	/**
+	 * 获取签名
+	 * **/
+	public static native String nativeGetSignature();//获取签名
  
 }

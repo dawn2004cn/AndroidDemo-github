@@ -9,6 +9,8 @@
 #include "videodecryptkey.h"
 #include "util.h"
 #include "log.h"
+#include "string.h"
+#include "errno.h"
 
 #define LIB_OFFSET 0x40
 
@@ -37,10 +39,12 @@ DLLAPI T_SyncWriterHandler * SWT_Init(const char * file)
 	memset(&addrs, 0, sizeof(T_FileAddress));
 	LOGD("SWT_Init %s %d",file,__LINE__);
 	/* 打开文件 */
+
 	fp = fopen(file, "rb");
 	if (fp == NULL)
 	{
-		LOGE("File open error:%s\n", file != NULL ? file : "NULL");
+		LOGE("File open error:%s,line:%d\n", file != NULL ? file : "NULL",__LINE__);
+		LOGE("strerror(errno):%s",strerror(errno));
 		return NULL;
 	}
 
@@ -280,7 +284,8 @@ DLLAPI T_WriterItem* GetWriterItem(T_SyncWriterHandler * handler, int index)
 		//获取图片
 		t_writerItem->pic = SWT_GetPicInfo(handler,handler->picOffset,t_writerItem->picAddr);
 
-	    LOGW("GetWriterItem  is %d!,soundAddr:0x%08x,picAddr:0x%08x,itemCount:0x%08x,itemOrder:0x%08x\n", __LINE__,t_writerItem->soundAddr,
+	    LOGW("GetWriterItem  is %d!,soundAddr:0x%08x,picAddr:0x%08x,itemCount:0x%08x,itemOrder:0x%08x\n",
+	    		__LINE__,t_writerItem->soundAddr,
 	    		t_writerItem->picAddr,t_writerItem->itemCount,t_writerItem->itemOrder);
 	}
 	if(buffer != NULL)
@@ -406,8 +411,8 @@ DLLAPI T_Item* GetChildrenItem(T_SyncWriterHandler * handler, int count,int orde
 
             item->pic = SWT_GetPicInfo(handler,handler->picOffset,item->picAddr);
 
-	        LOGW("GetChildrenItem  is %d!,picAddr:0x%08x,questCount:0x%08x,questOrder:0x%08x\n", __LINE__,
-	        		item->picAddr,item->questCount,item->questOrder);
+	        LOGW("GetChildrenItem  is %d!,picAddr:0x%08x,questCount:0x%08x,questOrder:0x%08x\n",
+	        		__LINE__,item->picAddr,item->questCount,item->questOrder);
 
         }
     }

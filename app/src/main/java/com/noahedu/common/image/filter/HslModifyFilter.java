@@ -20,7 +20,7 @@
 package com.noahedu.common.image.filter;
 
 public class HslModifyFilter implements IImageFilter{
-	private float HueFactor;//ɫ��
+	private float HueFactor;//色调
     
     /// <summary>
     /// initial value setting reference to http://blog.csdn.net/yacper/article/details/4743014

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapper namespace="com.noahedu.dao.TaskMapper">
+
+    <select id="findTask" resultType="com.noahedu.dao.TaskVo">
+        select id,title,brief,isRun,beginTime,repeat,requestCode
+        from t_task
+        limit ${rows} offset ${offset}
+    </select>
+
+    <select id="findById" resultType="com.noahedu.dao.TaskVo">
+        select id,title,brief,isRun,beginTime,repeat,requestCode
+        from t_task
+        where id='${id}'
+    </select>
+
+    <select id="findByRequestCode" resultType="com.noahedu.dao.TaskVo">
+        select id,title,brief,isRun,beginTime,repeat,requestCode
+        from t_task
+        where requestCode='${requestCode}'
+    </select>
+
+    <insert id="insert">
+        insert into t_task
+        (id,title,brief,beginTime,repeat,requestCode,isRun)
+        values('${id}','${title}','${brief}','${beginTime}','${repeat}','${requestCode}','${isRun}')
+    </insert>
+
+    <update id="update">
+        update t_task
+        set title='${title}',
+        brief='${brief}',
+        beginTime='${beginTime}',
+        repeat='${repeat}'
+        where id='${id}'
+    </update>
+
+    <update id="updateRun">
+        update t_task
+        set isRun='${isRun}'
+        where id='${id}'
+    </update>
+
+    <delete id="delete">
+        delete from t_task
+        where id='${id}'
+    </delete>
+
+</mapper>
+

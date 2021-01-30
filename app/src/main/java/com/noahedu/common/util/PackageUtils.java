@@ -45,7 +45,7 @@ import android.util.Log;
  */
 public class PackageUtils {
 
-    public static final String TAG = "PackageUtils";
+    public static final String TAG = PackageUtils.class.getSimpleName();
 
     /**
      * install according conditions

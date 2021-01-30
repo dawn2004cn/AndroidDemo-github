@@ -20,14 +20,14 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * ������Ч��
+ * 马赛克效果
  * @author daizhj
  *
  */
 public class MosaicFilter implements IImageFilter{
 	 
 	/**
-	 * �����˴�С
+	 * 马赛克大小
 	 */
 	public int MosiacSize = 4;
 	
@@ -39,14 +39,14 @@ public class MosaicFilter implements IImageFilter{
         for (int y = 0; y < height; y++) {
         	for (int x = 0; x < width; x++) {	
     	         if (y % MosiacSize == 0) { 	        	 
-    	       		 if (x % MosiacSize == 0){//������ʱ��ȡ���ظ�ֵ                      	 
+    	       		 if (x % MosiacSize == 0){//整数倍时，取像素赋值                      	 
 	       			     r = imageIn.getRComponent(x, y);
 	    	             g = imageIn.getGComponent(x, y);
 		                 b = imageIn.getBComponent(x, y);
 		         	 }
     	       		 imageIn.setPixelColor(x, y, r, g, b);
     	       	 }
-    	       	 else{ //������һ��          */ 	       		 
+    	       	 else{ //复制上一行          */ 	       		 
     	             imageIn.setPixelColor(x, y, imageIn.getPixelColor(x, y -1));
     	         }
     	    }

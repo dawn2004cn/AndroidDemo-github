@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 
-import com.noahedu.demo.PlayerActivity;
+import com.noahedu.demo.activity.PlayerActivity;
 
 import java.util.List;
 

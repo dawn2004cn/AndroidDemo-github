@@ -1,0 +1,228 @@
+package com.noahedu.similarphoto.utils;
+
+import com.noahedu.similarphoto.ImageUtil;
+
+import android.graphics.Bitmap;
+
+public class PyramidAlgorithm
+{
+	private float a;  
+	  
+    public PyramidAlgorithm() {  
+        a = 0.4f;  
+    }  
+      
+    public void setParameter(float p) {  
+        this.a = p;  
+    }  
+  
+    public Bitmap[] pyramidDown(Bitmap src, int level) {  
+    	Bitmap[] imagePyramids = new Bitmap[level + 1];  
+        imagePyramids[0] = src;  
+        for(int i=1; i<imagePyramids.length; i++) {  
+            imagePyramids[i] = pyramidReduce(imagePyramids[i-1]);  
+        }  
+        return imagePyramids;  
+    }  
+      
+    public Bitmap[] pyramidUp(Bitmap[] srcImage) {  
+    	Bitmap[] imagePyramids = new Bitmap[srcImage.length];  
+        for(int i=0; i<srcImage.length; i++) {  
+            imagePyramids[i] = pyramidExpand(srcImage[i]);  
+        }  
+        return imagePyramids;  
+    }  
+      
+    /*** 
+     * l1 = g1 - expand(g2) 
+     * l2 = g2 - expand(g3) 
+     * l0 = g0 - expand(g1) 
+     * @param reduceImages 
+     * @param expandImages 
+     * @return 
+     */  
+    public Bitmap[] getLaplacianPyramid(Bitmap[] reduceImages) {  
+    	Bitmap[] laplaciImages = new Bitmap[reduceImages.length -1];  
+        for(int i=1; i<reduceImages.length; i++) {  
+        	Bitmap expandImage = pyramidExpand(reduceImages[i]);  
+            //laplaciImages[i-1] = createCompatibleDestImage(expandImage, null);  
+            laplaciImages[i-1] = Bitmap.createBitmap(expandImage);  
+            int width = reduceImages[i-1].getWidth();  
+            int height = reduceImages[i-1].getHeight();  
+              
+            int ewidth = expandImage.getWidth();  
+            width = (width > ewidth) ? ewidth : width;  
+            height = (height > expandImage.getHeight()) ? expandImage.getHeight():height;  
+            System.out.println(" width = " + width + " expand width = " + ewidth);  
+              
+            int[] reducePixels = new int[width*height];  
+            int[] expandPixels = new int[width*height];  
+            int[] laPixels = new int[width*height];  
+            //getRGB( reduceImages[i-1], 0, 0, width, height, reducePixels);  
+            //getRGB( expandImage, 0, 0, width, height, expandPixels ); 
+            reducePixels = ImageUtil.getColors(reduceImages[i-1], width, height);
+            expandPixels = ImageUtil.getColors(expandImage, width, height); 
+            int index = 0;  
+            int er = 0, eg = 0, eb = 0;  
+            for(int row=0; row<height; row++) {  
+                int ta = 0, tr = 0, tg = 0, tb = 0;  
+                for(int col=0; col<width; col++) {  
+                    index = row * width + col;  
+                    ta = (reducePixels[index] >> 24) & 0xff;  
+                    tr = (reducePixels[index] >> 16) & 0xff;  
+                    tg = (reducePixels[index] >> 8) & 0xff;  
+                    tb = reducePixels[index] & 0xff;  
+                      
+                    ta = (expandPixels[index] >> 24) & 0xff;  
+                    er = (expandPixels[index] >> 16) & 0xff;  
+                    eg = (expandPixels[index] >> 8) & 0xff;  
+                    eb = expandPixels[index] & 0xff;  
+                      
+                    tr = tr - er;  
+                    tg = tg - eg;  
+                    tb = tb - eb;  
+                      
+                    laPixels[index] = (ta << 24) | (clamp(tr) << 16) | (clamp(tg) << 8) | clamp(tb);  
+                }  
+            }  
+            //setRGB( laplaciImages[i-1], 0, 0, width, height, laPixels );  
+            laplaciImages[i-1] = ImageUtil.createBitmap(laPixels, width, height);
+        }  
+  
+        return laplaciImages;  
+    }  
+      
+    private int clamp(int sumGreen)
+	{
+		// TODO Auto-generated method stub
+        return sumGreen < 0 ? 0 : (sumGreen > 255 ? 255 : sumGreen);  
+	}
+    private int clamp(float sumRed)
+	{
+		// TODO Auto-generated method stub
+        return (int)(sumRed < 0 ? 0 : (sumRed > 255 ? 255 : sumRed));  
+	}
+
+	private Bitmap pyramidReduce(Bitmap src) {  
+        int width = src.getWidth();  
+        int height = src.getHeight();  
+        //Bitmap dest = createSubCompatibleDestImage(src, null);  
+        Bitmap dest = Bitmap.createBitmap(src);  
+        int[] inPixels = new int[width*height];  
+        int ow = width/2;  
+        int oh = height/2;  
+        int[] outPixels = new int[ow*oh];  
+        //getRGB(src, 0, 0, width, height, inPixels );  
+        inPixels = ImageUtil.getColors(src, width, height);
+        int inRow=0, inCol = 0, index = 0, oudex =0, ta = 0;  
+        float[][] keneralData = this.getHVGaussianKeneral();  
+        for(int row=0; row<oh; row++) {  
+            for(int col=0; col<ow; col++) {  
+                inRow = 2* row;  
+                inCol = 2* col;  
+                if(inRow >= height) {  
+                    inRow = 0;  
+                }  
+                if(inCol >= width) {  
+                    inCol = 0;  
+                }  
+                float sumRed = 0, sumGreen = 0, sumBlue = 0;  
+                for(int subRow = -2; subRow <= 2; subRow++) {  
+                    int inRowOff = inRow + subRow;  
+                    if(inRowOff >= height || inRowOff < 0) {  
+                        inRowOff = 0;  
+                    }  
+                    for(int subCol = -2; subCol <= 2; subCol++) {  
+                        int inColOff = inCol + subCol;  
+                        if(inColOff >= width || inColOff < 0) {  
+                            inColOff = 0;  
+                        }  
+                        index = inRowOff * width + inColOff;  
+                        ta = (inPixels[index] >> 24) & 0xff;  
+                        int red = (inPixels[index] >> 16) & 0xff;  
+                        int green = (inPixels[index] >> 8) & 0xff;  
+                        int blue = inPixels[index] & 0xff;  
+                        sumRed += keneralData[subRow + 2][subCol + 2] * red;  
+                        sumGreen += keneralData[subRow + 2][subCol + 2] * green;  
+                        sumBlue += keneralData[subRow + 2][subCol + 2] * blue;  
+                    }  
+                }  
+                  
+                oudex = row * ow + col;  
+                outPixels[oudex] = (ta << 24) | (clamp(sumRed) << 16) | (clamp(sumGreen) << 8) | clamp(sumBlue);  
+            }  
+        }  
+        //setRGB( dest, 0, 0, ow, oh, outPixels );  
+        dest = ImageUtil.createBitmap(outPixels, ow, oh);
+        return dest;  
+    }  
+      
+
+	public Bitmap createSubCompatibleDestImage(Bitmap src, ColorModel dstCM) {  
+        if ( dstCM == null )  
+            dstCM = src.getColorModel();  
+        return new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(src.getWidth()/2, src.getHeight()/2), dstCM.isAlphaPremultiplied(), null);  
+    }  
+      
+    public Bitmap createTwiceCompatibleDestImage(Bitmap src, ColorModel dstCM) {  
+        if ( dstCM == null )  
+            dstCM = src.getColorModel();  
+        return new BufferedImage(dstCM, dstCM.createCompatibleWritableRaster(src.getWidth()*2, src.getHeight()*2), dstCM.isAlphaPremultiplied(), null);  
+    }  
+      
+    public Bitmap pyramidExpand(Bitmap src) {  
+        int width = src.getWidth();  
+        int height = src.getHeight();  
+        int[] inPixels = new int[width*height];  
+        //getRGB(src, 0, 0, width, height, inPixels );  
+        inPixels = ImageUtil.getColors(src, width, height);
+        int ow = 2*width;  
+        int oh =2*height;  
+        int[] outPixels = new int[ow * oh];  
+        int index = 0, outdex = 0, ta = 0;  
+        float[][] keneralData = this.getHVGaussianKeneral();  
+        Bitmap dest = createTwiceCompatibleDestImage(src, null);  
+        for(int row=0; row<oh; row++) {  
+            for(int col=0; col<ow; col++) {  
+                float sumRed = 0, sumGreen = 0, sumBlue = 0;  
+                for(int subRow = -2; subRow <= 2; subRow++) {  
+                    double srcRow = (row + subRow)/2.0;  
+                    double j = Math.floor(srcRow);  
+                    double t = srcRow - j;   
+                    if(t > 0) {  
+                        continue;  
+                    }  
+                    if(srcRow >= height || srcRow < 0) {  
+                        srcRow = 0;  
+                    }  
+                    for(int subCol = -2; subCol <= 2; subCol++) {  
+                        double srcColOff = (col + subCol)/2.0;  
+                        j = Math.floor(srcColOff);  
+                        t = srcColOff - j;  
+                        if(t > 0) {  
+                            continue;  
+                        }  
+                        if(srcColOff >= width || srcColOff < 0) {  
+                            srcColOff = 0;  
+                        }  
+                        index = (int)(srcRow * width + srcColOff);  
+                        ta = (inPixels[index] >> 24) & 0xff;  
+                        int red = (inPixels[index] >> 16) & 0xff;  
+                        int green = (inPixels[index] >> 8) & 0xff;  
+                        int blue = inPixels[index] & 0xff;  
+                        sumRed += keneralData[subRow + 2][subCol + 2] * red;  
+                        sumGreen += keneralData[subRow + 2][subCol + 2] * green;  
+                        sumBlue += keneralData[subRow + 2][subCol + 2] * blue;  
+                    }  
+                }  
+                outdex = row * ow + col;  
+                outPixels[outdex] = (ta << 24) | (clamp(4.0f * sumRed) << 16) | (clamp(4.0f * sumGreen) << 8) | clamp(4.0f * sumBlue);  
+                // outPixels[outdex] = (ta << 24) | (clamp(sumRed) << 16) | (clamp(sumGreen) << 8) | clamp(sumBlue);  
+            }  
+        }  
+        //setRGB( dest, 0, 0, ow, oh, outPixels );  
+        dest = ImageUtil.createBitmap(outPixels, ow, oh);
+        return dest;  
+    }  
+
+}

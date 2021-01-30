@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<db>
+    <table name="t_task">
+        <colunm name="id" type="varchar(64)" primaryKey="true"/>
+        <colunm name="title" type="varchar(30)"/>
+        <colunm name="brief" type="text"/>
+        <colunm name="beginTime" type="datetime"/>
+        <colunm name="repeat" type="varchar(30)"/>
+        <colunm name="requestCode" type="varchar(30)"/>
+        <colunm name="isRun" type="varchar(8)"/>
+    </table>
+</db>
+

@@ -55,7 +55,7 @@ public class Soduku {
         long t1=System.currentTimeMillis();
         solveSudoku(boards);
         long t2=System.currentTimeMillis();
-        System.out.println(t2-t1);
+        LogUtils.v((t2-t1)+"");
 
     }
 
@@ -107,18 +107,18 @@ public class Soduku {
                     boards[which(i, j)][datas[i][j] - '0'] = 1;
                 }
 
-                System.out.print(datas[i][j]+" ");
+                LogUtils.v(datas[i][j]+" ");
             }
 
-            System.out.println();
+            LogUtils.v();
         }
 
         dfs(boards, rows, cols, datas, 0, 0);
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                System.out.print(datas[i][j]+" ");
+                LogUtils.v(datas[i][j]+" ");
             }
-            System.out.println();
+            LogUtils.v();
         }
     }
 

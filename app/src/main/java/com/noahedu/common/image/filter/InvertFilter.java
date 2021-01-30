@@ -20,7 +20,7 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * ��ɫЧ��
+ * 反色效果
  * @author daizhj
  *
  */

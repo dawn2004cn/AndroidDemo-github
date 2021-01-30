@@ -6,7 +6,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.noahedu.fftlib.FftFactory;
+import com.noahedu.recorderlib.recorder.fftlib.FftFactory;
 import com.noahedu.recorderlib.recorder.listener.RecordDataListener;
 import com.noahedu.recorderlib.recorder.listener.RecordFftDataListener;
 import com.noahedu.recorderlib.recorder.listener.RecordResultListener;
@@ -97,6 +97,7 @@ public class RecordHelper {
             Logger.e(TAG, "状态异常当前状态： %s", state.name());
             return;
         }
+        Logger.e(TAG, "文件路径为： %s",filePath);
         resultFile = new File(filePath);
         String tempFilePath = getTempFilePath();
 
@@ -107,6 +108,7 @@ public class RecordHelper {
 
 
         tmpFile = new File(tempFilePath);
+        Logger.e(TAG, "临时文件路径为： %s",tempFilePath);
         audioRecordThread = new AudioRecordThread();
         audioRecordThread.start();
     }

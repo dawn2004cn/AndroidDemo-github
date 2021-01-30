@@ -32,6 +32,7 @@ import jp.co.cyberagent.android.gpuimage.GPUImage3x3ConvolutionFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImage3x3TextureSamplingFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageAddBlendFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageAlphaBlendFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageBeautyFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageBilateralFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageBoxBlurFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;
@@ -95,8 +96,10 @@ import jp.co.cyberagent.android.gpuimage.GPUImageSobelEdgeDetection;
 import jp.co.cyberagent.android.gpuimage.GPUImageSoftLightBlendFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSourceOverBlendFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSphereRefractionFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSplitScreenFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSubtractBlendFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSwirlFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSoulOutFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageToneCurveFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageToonFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageTransformFilter;
@@ -183,13 +186,13 @@ public class GPUImageFilterTools {
         filters.addFilter("False Color", FilterType.FALSE_COLOR);
 
         filters.addFilter("Color Balance", FilterType.COLOR_BALANCE);
-
         filters.addFilter("Levels Min (Mid Adjust)", FilterType.LEVELS_FILTER_MIN);
-
         filters. addFilter("Bilateral Blur", FilterType.BILATERAL_BLUR);
-
         filters.addFilter("Transform (2-D)", FilterType.TRANSFORM2D);
+        filters.addFilter("Face beauty", FilterType.FACE_BEAUTY);
+        filters.addFilter("Split Screen", FilterType.SPLIT_SCREEN);
 
+        filters.addFilter("Test ", FilterType.TEST);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose a filter");
@@ -285,7 +288,6 @@ public class GPUImageFilterTools {
             case BLEND_EXCLUSION:
                 return createBlendFilter(context, GPUImageExclusionBlendFilter.class);
 
-
             case BLEND_HARD_LIGHT:
                 return createBlendFilter(context, GPUImageHardLightBlendFilter.class);
             case BLEND_LIGHTEN:
@@ -380,6 +382,14 @@ public class GPUImageFilterTools {
             case TRANSFORM2D:
                 return new GPUImageTransformFilter();
 
+            case FACE_BEAUTY:
+                return new GPUImageBeautyFilter();
+
+            case SPLIT_SCREEN:
+                return new GPUImageSplitScreenFilter();
+            case TEST:
+                return new GPUImageSoulOutFilter();
+
             default:
                 throw new IllegalStateException("No filter of that type!");
         }
@@ -389,7 +399,7 @@ public class GPUImageFilterTools {
     private static GPUImageFilter createBlendFilter(Context context, Class<? extends GPUImageTwoInputFilter> filterClass) {
         try {
             GPUImageTwoInputFilter filter = filterClass.newInstance();
-            filter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+            filter.setBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ok1));
             return filter;
         } catch (Exception e) {
             e.printStackTrace();
@@ -407,7 +417,7 @@ public class GPUImageFilterTools {
         BLEND_DISSOLVE, BLEND_EXCLUSION, BLEND_SOURCE_OVER, BLEND_HARD_LIGHT, BLEND_LIGHTEN, BLEND_ADD, BLEND_DIVIDE, BLEND_MULTIPLY, BLEND_OVERLAY, BLEND_SCREEN, BLEND_ALPHA,
         BLEND_COLOR, BLEND_HUE, BLEND_SATURATION, BLEND_LUMINOSITY, BLEND_LINEAR_BURN, BLEND_SOFT_LIGHT, BLEND_SUBTRACT, BLEND_CHROMA_KEY, BLEND_NORMAL, LOOKUP_AMATORKA,
         GAUSSIAN_BLUR, CROSSHATCH, BOX_BLUR, CGA_COLORSPACE, DILATION, KUWAHARA, RGB_DILATION, SKETCH, TOON, SMOOTH_TOON, BULGE_DISTORTION, GLASS_SPHERE, HAZE, LAPLACIAN, NON_MAXIMUM_SUPPRESSION,
-        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D
+        SPHERE_REFRACTION, SWIRL, WEAK_PIXEL_INCLUSION, FALSE_COLOR, COLOR_BALANCE, LEVELS_FILTER_MIN, BILATERAL_BLUR, HALFTONE, TRANSFORM2D,FACE_BEAUTY,SPLIT_SCREEN,TEST
     }
 
     private static class FilterList {

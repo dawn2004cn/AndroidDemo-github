@@ -18,7 +18,7 @@
 
 package com.noahedu.common.image.filter;
 /**
- * ��������Ե���Ч��
+ * 参数化边缘检测效果
  * @author daizhj
  *
  */

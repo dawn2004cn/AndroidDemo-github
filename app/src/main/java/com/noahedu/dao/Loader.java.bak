@@ -1,0 +1,411 @@
+package com.noahedu.dao;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.noahedu.common.util.LogUtils;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * © 2019 www.youxuepai.com
+ *
+ * @version 1.0
+ * @file name：Loader$
+ * @file describe：简单描述该文件作用
+ * @anthor :daisg
+ * @create time 2020/4/26$ 20:14$
+ */
+public class Loader implements InvocationHandler {
+
+
+    private static String TAG="Loader";
+
+    private DBHelper helper;
+    public static String dbPath;
+    private static final String MAPPER_NAMESPACE="namespace";
+    private static final String ID="id";
+    private static final String TABLE_NAME="name";
+    private static final String COLUNM_NAME="name";
+    private static final String COLUNM_TYPE="type";
+    private static final String COLUNM_PRIMARY="primaryKey";
+    private static final String COLUNM_AUTOINCREMENT="autoincrement";
+    private static final String RESULT_TYPE="resultType";
+
+    private Context context;
+    private XmlResourceParser xmlParser;
+    private int xmlId;
+    public static int dbXmlId;
+    private SQLiteDatabase db;
+    private Dao dao;
+
+    public Loader(){
+
+    }
+
+    public Loader(Activity context){
+        this.helper=new DBHelper(context);
+        this.context=context;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+        Object result=null;
+        if (Object.class.equals(method.getDeclaringClass())) {
+            try {
+                result=method.invoke(this, args);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        } else {
+            result=run(method, args);
+        }
+        return result;
+    }
+
+    /**
+     *
+     * 获得xml关联的接口
+     *
+     * @return
+     * @throws XmlPullParserException
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public Class getMapper() throws XmlPullParserException, ClassNotFoundException, IOException {
+        Class c=null;
+        Resources res = context.getResources();
+        xmlParser = res.getXml(xmlId);
+        int eventType = xmlParser.getEventType();
+        while (eventType != XmlResourceParser.END_DOCUMENT) {
+            if (eventType == XmlResourceParser.START_TAG) {
+                String tagName = xmlParser.getName();
+                if(tagName.equals("mapper")){
+                    int count=xmlParser.getAttributeCount();
+                    for(int i=0;i<count;i++){
+                        if(xmlParser.getAttributeName(i).equals(MAPPER_NAMESPACE)) {
+                            c=Class.forName(xmlParser.getAttributeValue(i));
+                        }
+                    }
+                }
+            }
+            eventType = xmlParser.next();
+        }
+        return c;
+    }
+
+    public Object run(Method method,Object[] args) throws Exception{
+        if(dao==null)
+            dao=new Dao();
+        Object result=null;
+        String name=method.getName();
+        //初始化数据库表，如果存不存在则建表
+        openDB();
+        result=dao.exec(name,args);
+        return result;
+    }
+
+    public void initTable(SQLiteDatabase db) throws XmlPullParserException, IOException{
+        Resources res = context.getResources();
+        xmlParser = res.getXml(dbXmlId);
+        int eventType = xmlParser.getEventType();
+        // 判断是否到了文件的结尾
+        while (eventType != XmlResourceParser.END_DOCUMENT) {
+            //启始标签
+            if (eventType == XmlResourceParser.START_TAG) {
+                String tagName = xmlParser.getName();
+                if(tagName.equals("table")){
+                    StringBuffer sb=new StringBuffer();
+                    sb.append("create table if not exists ");
+                    int count=xmlParser.getAttributeCount();
+                    for(int i=0;i<count;i++){
+                        //表名
+                        if(xmlParser.getAttributeName(i).equals(TABLE_NAME)){
+                            sb.append(xmlParser.getAttributeValue(i)+"( ");
+                        }
+                    }
+                    int e=xmlParser.next();
+                    if(e==XmlResourceParser.START_TAG){
+                        tagName = xmlParser.getName();
+                        //字段
+                        while(tagName.equals("colunm")){
+                            if(e==XmlResourceParser.START_TAG){
+                                sb.append(xmlParser.getAttributeValue(null, COLUNM_NAME)+" ");
+                                sb.append(xmlParser.getAttributeValue(null, COLUNM_TYPE)+" ");
+                                String isPrimary=xmlParser.getAttributeValue(null, COLUNM_PRIMARY);
+                                if(isPrimary!=null && isPrimary.equals("true"))
+                                    sb.append("primary key ");
+                                String isAutoIncrement=xmlParser.getAttributeValue(null, COLUNM_AUTOINCREMENT);
+                                if(isAutoIncrement!=null && isAutoIncrement.equals("true"))
+                                    sb.append("autoincrement ");
+                                sb.append(",");
+                            }
+                            e=xmlParser.next();
+                            tagName = xmlParser.getName();
+                        }
+                        String s=sb.substring(0,sb.length()-1);
+                        s=s+")";
+                        LogUtils.d(TAG, "建表语句为:"+s);
+                        db.execSQL(s);
+                    }
+                }
+            }
+            //移到下一个标签
+            eventType = xmlParser.next();
+        }
+    }
+
+    public void dropTable(SQLiteDatabase db) throws XmlPullParserException, IOException{
+        Resources res = context.getResources();
+        xmlParser = res.getXml(dbXmlId);
+        int eventType = xmlParser.getEventType();
+        // 判断是否到了文件的结尾
+        while (eventType != XmlResourceParser.END_DOCUMENT) {
+            //启始标签
+            if (eventType == XmlResourceParser.START_TAG) {
+                String tagName = xmlParser.getName();
+                if(tagName.equals("table")){
+                    StringBuffer sb=new StringBuffer();
+                    sb.append("drop table if exists ");
+                    int count=xmlParser.getAttributeCount();
+                    for(int i=0;i<count;i++){
+                        //表名
+                        if(xmlParser.getAttributeName(i).equals(TABLE_NAME)){
+                            sb.append(xmlParser.getAttributeValue(i));
+                        }
+                    }
+                    db.execSQL(sb.toString());
+                }
+            }
+            //移到下一个标签
+            eventType = xmlParser.next();
+        }
+    }
+
+    private void openDB(){
+        if(helper==null)
+            this.helper=new DBHelper(context);
+        db=helper.getReadableDatabase();
+    }
+
+    class Dao{
+        public Object exec(String name,Object[] args) throws Exception{
+            Object result = null;
+            //解析xml
+            Resources res = context.getResources();
+            xmlParser = res.getXml(xmlId);
+            int eventType = xmlParser.getEventType();
+            // 判断是否到了文件的结尾
+            while (eventType != XmlResourceParser.END_DOCUMENT) {
+                //启始标签
+                if (eventType == XmlResourceParser.START_TAG) {
+                    String tagName = xmlParser.getName();
+                    if(tagName.equals("select")){
+                        //id
+                        String id=xmlParser.getAttributeValue(null, ID);
+                        if(name.equals(id)){
+                            //返回类型
+                            String type=xmlParser.getAttributeValue(null, RESULT_TYPE);
+                            //获得sql语句
+                            eventType = xmlParser.next();
+                            String sql=xmlParser.getText();
+                            //绑定参数
+                            sql=bindArgs(sql,args);
+                            Cursor cursor=db.rawQuery(sql,new String[]{});
+                            //映射结果
+                            if(!type.equals("java.util.Map")){
+                                List list=new ArrayList();
+                                Class c=Class.forName(type);
+                                while(cursor.moveToNext()){
+                                    Object o=c.newInstance();
+                                    List<Field> fs=getDeclaredField(o);
+                                    for(Field f : fs){
+                                        String fName=f.getName();
+                                        if(fName.equals("serialVersionUID"))
+                                            continue;
+                                        Method m=getDeclaredMethod(o,"set"+fName.substring(0,1).toUpperCase()+fName.substring(1),f.getType());
+                                        if(f.getType()==String.class){
+                                            try{
+                                                m.invoke(o, cursor.getString(cursor.getColumnIndexOrThrow(fName)));
+                                            }catch(Exception e){
+                                                m.invoke(o, "");
+                                            }
+                                        }
+                                        if(f.getType()==Integer.class){
+                                            try{
+                                                m.invoke(o, cursor.getInt(cursor.getColumnIndexOrThrow(fName)));
+                                            }catch(Exception e){
+                                                m.invoke(o, 0);
+                                            }
+                                        }
+                                        if(f.getType()==Float.class){
+                                            try{
+                                                m.invoke(o, cursor.getFloat(cursor.getColumnIndexOrThrow(fName)));
+                                            }catch(Exception e){
+                                                m.invoke(o, 0);
+                                            }
+                                        }
+                                        if(f.getType()==Double.class){
+                                            try{
+                                                m.invoke(o, cursor.getDouble(cursor.getColumnIndexOrThrow(fName)));
+                                            }catch(Exception e){
+                                                m.invoke(o, 0);
+                                            }
+                                        }
+                                    }
+                                    list.add(o);
+                                }
+                                result=list;
+                            }
+                            else{
+
+                            }
+                            return result;
+                        }
+                    }else if(tagName.equals("insert")){
+                        String id=xmlParser.getAttributeValue(null, ID);
+                        if(name.equals(id)){
+                            //获得sql语句
+                            eventType = xmlParser.next();
+                            String sql=xmlParser.getText();
+                            //绑定参数
+                            sql=bindArgs(sql,args);
+                            db.execSQL(sql);
+                        }
+                    }else if(tagName.equals("update")){
+                        String id=xmlParser.getAttributeValue(null, ID);
+                        if(name.equals(id)){
+                            //获得sql语句
+                            eventType = xmlParser.next();
+                            String sql=xmlParser.getText();
+                            //绑定参数
+                            sql=bindArgs(sql,args);
+                            db.execSQL(sql);
+                        }
+                    }else if(tagName.equals("delete")){
+                        String id=xmlParser.getAttributeValue(null, ID);
+                        if(name.equals(id)){
+                            //获得sql语句
+                            eventType = xmlParser.next();
+                            String sql=xmlParser.getText();
+                            //绑定参数
+                            sql=bindArgs(sql,args);
+                            db.execSQL(sql);
+                        }
+                    }
+                }
+                //移到下一个标签
+                eventType = xmlParser.next();
+            }
+            return result;
+        }
+
+        public Cursor query(){
+            return null;
+        }
+    }
+
+    /**
+     *
+     *  绑定参数
+     *
+     * @param sql
+     * @param args
+     * @return
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
+    private String bindArgs(String sql,Object[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        if(!args[0].getClass().getName().equals(Map.class.getName())){
+            Class argc=args[0].getClass();
+            List<Field> fs=getDeclaredField(args[0]);
+            for(Field f: fs){
+                String fName=f.getName();
+                Method m=getDeclaredMethod(args[0],"get"+fName.substring(0,1).toUpperCase()+fName.substring(1));
+                //Log.d(TAG, "解析字段："+fName);
+                String fValue="";
+                if(!fName.equals("serialVersionUID"))
+                    fValue=String.valueOf(m.invoke(args[0]));
+                sql=sql.replace("${"+fName+"}", fValue);
+            }
+        }
+        //绑定参数，参数类型为map
+        else{
+
+        }
+        return sql;
+    }
+
+    private List<Field> getDeclaredField(Object object){
+        List<Field> fa = new ArrayList<Field>() ;
+
+        Class<?> clazz = object.getClass() ;
+
+        for(; clazz != Object.class ; clazz = clazz.getSuperclass()) {
+            try {
+                Field[] fs=clazz.getDeclaredFields();
+                for(Field f : fs){
+                    fa.add(f);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+
+        return fa;
+    }
+
+    private Method getDeclaredMethod(Object object, String methodName, Class<?> ... parameterTypes){
+        Method method = null ;
+
+        for(Class<?> clazz = object.getClass() ; clazz != Object.class ; clazz = clazz.getSuperclass()) {
+            try {
+                method = clazz.getDeclaredMethod(methodName, parameterTypes) ;
+                return method ;
+            } catch (Exception e) {
+
+            }
+        }
+
+        return null;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public int getXmlId() {
+        return xmlId;
+    }
+
+    public void setXmlId(int xmlId) {
+        this.xmlId = xmlId;
+    }
+
+    public DBHelper getHelper() {
+        return helper;
+    }
+
+    public void setHelper(DBHelper helper) {
+        this.helper = helper;
+    }
+}

@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ������Ч
+ * 浮雕特效
  * @author daizhj
  *
  */
@@ -32,7 +32,7 @@ public class ReliefFilter implements IImageFilter{
 		        int rr = imageIn.getRComponent(x, y) - imageIn.getRComponent(x + 1, y) + 128;
 		        int gg = imageIn.getGComponent(x, y) - imageIn.getGComponent(x + 1, y) + 128; 
 		        int bb = imageIn.getBComponent(x, y) - imageIn.getBComponent(x + 1, y) + 128;
-		        //�������
+		        //处理溢出
 		        if (rr > 255) rr = 255; 
 		        if (rr < 0) rr = 0; 
 		        if (gg > 255) gg = 255;

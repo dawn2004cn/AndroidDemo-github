@@ -1,16 +1,16 @@
 package com.noahedu.demo.utils;
 
-import com.noahedu.demo.BorderScrollViewDemo;
-import com.noahedu.demo.BroadcastReceiverDemo;
-import com.noahedu.demo.DownloadManagerDemo;
-import com.noahedu.demo.DropDownListViewDemo;
-import com.noahedu.demo.ImageCacheDemo;
-import com.noahedu.demo.ImageSDCardCacheDemo;
-import com.noahedu.demo.SearchViewDemo;
-import com.noahedu.demo.ServiceDemo;
-import com.noahedu.demo.SlideOnePageGalleryDemo;
-import com.noahedu.demo.ViewPagerDemo;
-import com.noahedu.demo.ViewPagerMulTiFragmentDemo;
+import com.noahedu.demo.activity.BorderScrollViewDemo;
+import com.noahedu.demo.activity.BroadcastReceiverDemo;
+import com.noahedu.demo.activity.DownloadManagerDemo;
+import com.noahedu.demo.activity.DropDownListViewDemo;
+import com.noahedu.demo.activity.ImageCacheDemo;
+import com.noahedu.demo.activity.ImageSDCardCacheDemo;
+import com.noahedu.demo.activity.SearchViewDemo;
+import com.noahedu.demo.activity.ServiceDemo;
+import com.noahedu.demo.activity.SlideOnePageGalleryDemo;
+import com.noahedu.demo.activity.ViewPagerDemo;
+import com.noahedu.demo.activity.ViewPagerMulTiFragmentDemo;
 
 import android.app.Activity;
 import android.content.Intent;

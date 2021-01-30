@@ -33,8 +33,9 @@ bool Swt_Handler::isValid() {
 Swt_Handler * Swt_Handler::getHandler(const char * filepath)
 {
 	// 先判断书本是否已经打开
-	LOGD("Swt_Handler::getHandler %s %d",filepath,__LINE__);
+	LOGD("Swt_Handler::getHandler %s %d\n",filepath,__LINE__);
 	for(int i=0; i<MAX_OPEN_BOOK; i++) {
+	LOGD("Swt_Handler::getHandler %s %d\n",s_Handler[i],__LINE__);
 		if(s_Handler[i] != NULL) {
 			if(filepath != NULL && s_Handler[i]->t_handler != NULL
 					&& s_Handler[i]->t_handler->file != NULL
@@ -44,9 +45,10 @@ Swt_Handler * Swt_Handler::getHandler(const char * filepath)
 		}
 	}
 
-	LOGD("Swt_Handler::getHandler %s %d",filepath,__LINE__);
+	LOGD("Swt_Handler::getHandler %s %d\n",filepath,__LINE__);
 	// 没有打开则打开书本
 	for(int i=0; i<MAX_OPEN_BOOK; i++) {
+	LOGD("Swt_Handler::getHandler %s %d\n",s_Handler[i],__LINE__);
 		if(s_Handler[i] == NULL) {
 			s_Handler[i] = new Swt_Handler(filepath);
 			s_Handler[i]->hd = sDescripter++;

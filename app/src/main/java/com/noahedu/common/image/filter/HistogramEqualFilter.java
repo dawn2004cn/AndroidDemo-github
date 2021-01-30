@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ֱ��ͼ��Ч
+ * 直方图特效
  * @author daizhj
  *
  */

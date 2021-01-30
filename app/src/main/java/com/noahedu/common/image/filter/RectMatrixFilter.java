@@ -21,14 +21,14 @@ package com.noahedu.common.image.filter;
 import android.graphics.Color;
 
 /**
- * �������Ч��
+ * 方块矩阵效果
  * @author daizhj
  *
  */
 public class RectMatrixFilter extends RadialDistortionFilter{
 	
 	/**
-	 * 0��ֱ���� 1ˮƽ����
+	 * 0垂直方向， 1水平方向
 	 */
 	public int Oriention = 0;
 	
@@ -43,7 +43,7 @@ public class RectMatrixFilter extends RadialDistortionFilter{
        Image clone = imageIn.clone();
        clone.clearImage(Color.LTGRAY);
        
-       //ˮƽ����
+       //水平方向
 	   Point[] point = new Point[BannerNum];
 	   int dh = height / BannerNum; 
 	   int dw = width;
@@ -62,7 +62,7 @@ public class RectMatrixFilter extends RadialDistortionFilter{
             	}
             }
 	   }
-	   //��ͼ�����ಿ�������
+	   //对图像其余部分做填充
        for(int xx = 0; xx < width; xx++){
     	   for(int yy = (int)point[BannerNum-1].Y + dh; yy <height ; yy++){
             	r = imageIn.getRComponent(xx, yy);
@@ -72,7 +72,7 @@ public class RectMatrixFilter extends RadialDistortionFilter{
   	       }
        }	
        
-       //��ֱ����
+       //垂直方向
 	   point = new Point[BannerNum];
 	   dw = width / BannerNum;	
 	   dh = height;
@@ -91,7 +91,7 @@ public class RectMatrixFilter extends RadialDistortionFilter{
             	}
             }
        }   
-       //��ͼ�����ಿ�������
+       //对图像其余部分做填充
        for(int yy = 0; yy < height; yy++){
     	   for(int xx = (int)point[BannerNum-1].X + dw; xx < width ; xx++){
             	r = imageIn.getRComponent(xx, yy);

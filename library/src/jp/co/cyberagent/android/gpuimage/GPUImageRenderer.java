@@ -24,12 +24,8 @@ import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLSurfaceView;
 
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -38,10 +34,16 @@ import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
+import jp.co.cyberagent.android.gpuimage.view.GLTextureView;
+
 import static jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil.TEXTURE_NO_ROTATION;
 
 @TargetApi(11)
-public class GPUImageRenderer implements Renderer, PreviewCallback {
+public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.Renderer, PreviewCallback {
     public static final int NO_IMAGE = -1;
     static final float CUBE[] = {
             -1.0f, -1.0f,
@@ -122,6 +124,11 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         if (mSurfaceTexture != null) {
             mSurfaceTexture.updateTexImage();
         }
+    }
+
+    @Override
+    public void onSurfaceDestroyed(GL10 gl) {
+
     }
 
     /**
@@ -235,6 +242,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 if (bitmap.getWidth() % 2 == 1) {
                     resizedBitmap = Bitmap.createBitmap(bitmap.getWidth() + 1, bitmap.getHeight(),
                             Bitmap.Config.ARGB_8888);
+                    //resizedBitmap.setDensity(bitmap.getDensity());
                     Canvas can = new Canvas(resizedBitmap);
                     can.drawARGB(0x00, 0x00, 0x00, 0x00);
                     can.drawBitmap(bitmap, 0, 0, null);
@@ -341,6 +349,18 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
     public boolean isFlippedVertically() {
         return mFlipVertical;
+    }
+
+    public float getBackgroundRed() {
+        return mBackgroundRed;
+    }
+
+    public float getBackgroundGreen() {
+        return mBackgroundGreen;
+    }
+
+    public float getBackgroundBlue() {
+        return mBackgroundBlue;
     }
 
     protected void runOnDraw(final Runnable runnable) {

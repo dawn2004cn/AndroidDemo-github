@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * Ť��Ч��
+ * 扭曲效果
  * @author daizhj
  *
  */

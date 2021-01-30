@@ -1,9 +1,12 @@
 package com.noahedu.demo.adapter;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -70,6 +73,10 @@ public class QuickViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public static QuickViewHolder get(ViewGroup parent, int layoutId){
+        View convertView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
+        return new QuickViewHolder(convertView);
+    }
     /**
      * 获取条目的View
      */
@@ -155,6 +162,19 @@ public class QuickViewHolder extends RecyclerView.ViewHolder {
     public QuickViewHolder setImageBitmap(int viewId, Bitmap bitmap) {
         ImageView imageView = getView(viewId);
         imageView.setImageBitmap(bitmap);
+        return this;
+    }
+
+    /**
+     * 设置图片
+     */
+    public QuickViewHolder setImageDrawable(int id, Drawable drawableRes) {
+        View view = getView(id);
+        if (view instanceof ImageView) {
+            ((ImageView) view).setImageDrawable(drawableRes);
+        } else {
+            view.setBackgroundDrawable(drawableRes);
+        }
         return this;
     }
 

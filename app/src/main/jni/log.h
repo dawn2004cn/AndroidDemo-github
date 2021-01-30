@@ -19,14 +19,14 @@
 	#define CONCAT(a, b, c) STR(a##b##c)
 	#define _CONCAT(a, b, c) CONCAT(a, b, c)
 	#define TAG "PH_JNI"
-	#define LOGI(fmt, arg...)	__android_log_print(ANDROID_LOG_INFO, TAG, fmt, ##arg)
+	#define LOGI(fmt, arg...)	__android_log_print(ANDROID_LOG_INFO, TAG, fmt, ##arg);__android_log_print(ANDROID_LOG_INFO, TAG, "file: %s,line:%d \n", __FILE__, __LINE__)
 	#ifdef SYNC_DEBUG
-		#define LOGD(fmt, arg...)	__android_log_print(ANDROID_LOG_DEBUG, TAG, fmt, ##arg)
+		#define LOGD(fmt, arg...)	__android_log_print(ANDROID_LOG_DEBUG, TAG, fmt, ##arg);__android_log_print(ANDROID_LOG_DEBUG, TAG, "file: %s,line:%d \n", __FILE__, __LINE__)
 	#else
 		#define LOGD(fmt, arg...)
 	#endif
-	#define LOGW(fmt, arg...)	__android_log_print(ANDROID_LOG_WARN, TAG, fmt, ##arg)
-	#define LOGE(fmt, arg...)	__android_log_print(ANDROID_LOG_ERROR, TAG, fmt, ##arg)
+	#define LOGW(fmt, arg...)	__android_log_print(ANDROID_LOG_WARN, TAG, fmt, ##arg);__android_log_print(ANDROID_LOG_WARN, TAG, "file: %s,line:%d \n", __FILE__, __LINE__)
+	#define LOGE(fmt, arg...)	__android_log_print(ANDROID_LOG_ERROR, TAG, fmt, ##arg);__android_log_print(ANDROID_LOG_ERROR, TAG, "file: %s,line:%d \n", __FILE__, __LINE__)
 	#define OOM(len)			__android_log_print(ANDROID_LOG_ERROR, TAG, "Out of memory! %s,%d MALLOC:0x%08x\n", __FILE__, __LINE__, len)
 #else
 	#define LOGI(fmt, arg...)	printf("INFO: %s,%d\t", __FILE__, __LINE__);printf(fmt, ##arg)

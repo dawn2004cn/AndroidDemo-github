@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import com.google.gson.Gson;
 import com.noahedu.common.filedownloader.base.Log;
+import com.noahedu.demo.utils.DingDataBean;
 import com.noahedu.demo.utils.XQEBean;
 
 import java.io.BufferedReader;
@@ -152,6 +153,37 @@ public class AssetsFileUtils {
                     newList.add(xqeBean);
                 }
                 is.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newList;
+    }
+
+    public static List<DingDataBean.DataBean> ReadJsonFileFromAsset(Context context, String assetsPath)
+    {
+        List<DingDataBean.DataBean> newList=new ArrayList<DingDataBean.DataBean>();
+        AssetManager am = context.getResources().getAssets();
+        try {
+            InputStream is = am.open(assetsPath);
+            if (is != null)
+            {
+                InputStreamReader inputreader = new InputStreamReader(is);
+                BufferedReader buffreader = new BufferedReader(inputreader);
+                String line;
+                String message = "";
+                //分行读取
+                while (( line = buffreader.readLine()) != null) {
+                    //newList.add(line+"\n");
+                    message += line;
+                }
+                is.close();
+
+
+                Gson gson = new Gson() ;
+                Log.v("ii",message+"\n");
+                DingDataBean xqeBean = gson.fromJson(message.replace("\\xa0",""),DingDataBean.class);
+                newList.addAll(xqeBean.getData());
             }
         } catch (IOException e) {
             e.printStackTrace();

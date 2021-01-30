@@ -21,14 +21,14 @@ package com.noahedu.common.image.filter;
 import android.graphics.Color;
 
 /**
- * ��Ҷ��Ч��
+ * 百叶窗效果
  * @author daizhj
  *
  */
 public class BannerFilter  extends RadialDistortionFilter{
 	
 	/**
-	 * 0��ֱ���� 1ˮƽ����
+	 * 0垂直方向， 1水平方向
 	 */
 	public boolean IsHorizontal = true;
 	
@@ -36,8 +36,8 @@ public class BannerFilter  extends RadialDistortionFilter{
 	
 	/**
 	 * 
-	 * @param bannerNum  ���� 
-	 * @param isHorizontal  true:ˮƽ����   false:��ֱ����
+	 * @param bannerNum  数量 
+	 * @param isHorizontal  true:水平方向   false:垂直方向
 	 */
 	public BannerFilter(int bannerNum, boolean isHorizontal){
 		BannerNum = bannerNum;
@@ -53,7 +53,7 @@ public class BannerFilter  extends RadialDistortionFilter{
        Image clone = imageIn.clone();
        clone.clearImage(Color.LTGRAY);
        Point[] point = new Point[BannerNum];
-       if(this.IsHorizontal){//ˮƽ����   
+       if(this.IsHorizontal){//水平方向   
     	   int dh = height / BannerNum; 
     	   int dw = width;
     	   for(int i = 0; i < BannerNum; i++){
@@ -71,7 +71,7 @@ public class BannerFilter  extends RadialDistortionFilter{
 	            	}
 	            }
     	   }
-    	   //��ͼ�����ಿ�������
+    	   //对图像其余部分做填充
 	       for(int xx = 0; xx < width; xx++){
 	    	   for(int yy = (int)point[BannerNum-1].Y + dh; yy <height ; yy++){
 	            	r = imageIn.getRComponent(xx, yy);
@@ -81,7 +81,7 @@ public class BannerFilter  extends RadialDistortionFilter{
       	       }
 	       }	
        }
-       else{//��ֱ����
+       else{//垂直方向
     	   int dw = width / BannerNum;	
     	   int dh = height;
            for(int i = 0; i < BannerNum; i++){
@@ -99,7 +99,7 @@ public class BannerFilter  extends RadialDistortionFilter{
 	            	}
 	            }
 	       }   
-	       //��ͼ�����ಿ�������
+	       //对图像其余部分做填充
 	       for(int yy = 0; yy < height; yy++){
 	    	   for(int xx = (int)point[BannerNum-1].X + dw; xx < width ; xx++){
 	            	r = imageIn.getRComponent(xx, yy);

@@ -1,16 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    //compileSdkVersion rootProject.ext.compileSdkVersion
-    //buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION
     defaultConfig {
-        //minSdkVersion rootProject.ext.minSdkVersion
-        //targetSdkVersion rootProject.ext.targetSdkVersion
-
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
+        versionCode = VERSION_CODE
+        versionName = VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -48,7 +45,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile project(':VideoPlayModule-Lite')
-    compile 'com.android.support:support-v4:24.2.0'
+    //compile 'com.android.support:support-v4:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation('com.google.android.exoplayer:exoplayer-core:2.10.4', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-compat'

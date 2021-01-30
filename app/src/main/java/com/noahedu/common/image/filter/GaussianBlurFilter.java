@@ -20,7 +20,7 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * ��˹ģ��filter
+ * 高斯模糊filter
  * @author daizhj
  *
  */

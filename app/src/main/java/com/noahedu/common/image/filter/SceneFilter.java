@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 
 /**
- * �龰Ч����������Ȼ��ɫ��Ⱦ��
+ * 情景效果（用于自然景色渲染）
  * @author daizhj
  *
  */

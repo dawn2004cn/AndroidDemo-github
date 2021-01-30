@@ -22,6 +22,8 @@ import android.graphics.PointF;
 import android.opengl.GLES20;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 
@@ -102,7 +104,9 @@ public class GPUImageFilter {
 
     public void onDraw(final int textureId, final FloatBuffer cubeBuffer,
                        final FloatBuffer textureBuffer) {
+		//应用 program
         GLES20.glUseProgram(mGLProgId);
+        // 在绘制之前做一些准备工作，基本上就是各种滤镜的赋值操作。
         runPendingOnDrawTasks();
         if (!mIsInitialized) {
             return;
@@ -121,14 +125,20 @@ public class GPUImageFilter {
             GLES20.glUniform1i(mGLUniformTexture, 0);
         }
         onDrawArraysPre();
+        // 绘制数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glDisableVertexAttribArray(mGLAttribPosition);
         GLES20.glDisableVertexAttribArray(mGLAttribTextureCoordinate);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
-    protected void onDrawArraysPre() {}
+    protected void onDrawArraysPre() {
+	}
 
+    /**
+     * 目的是给各个滤镜设置参数的
+     *
+    */
     protected void runPendingOnDrawTasks() {
         while (!mRunOnDraw.isEmpty()) {
             mRunOnDraw.removeFirst().run();
@@ -274,5 +284,29 @@ public class GPUImageFilter {
     public static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
+    }
+
+
+    @Override
+    public GPUImageFilter clone(){
+        try {
+            final Class<? extends GPUImageFilter> filterClass = getClass();
+            final GPUImageFilter newFilter = filterClass.newInstance();
+            final Field[] fields = filterClass.getDeclaredFields();
+            for (Field field : fields) {
+                boolean isStatic = Modifier.isStatic(field.getModifiers());
+                if (!isStatic) {
+                    field.setAccessible(true);
+                    final Object value = field.get(this);
+                    field.set(newFilter, value);
+                }
+            }
+            return newFilter;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        return this;
     }
 }

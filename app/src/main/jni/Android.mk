@@ -16,6 +16,7 @@ LOCAL_PATH := $(call my-dir)
 
 # libpersonhealth.so
 include $(CLEAR_VARS)
+APP_ALLOW_MISSING_DEPS=true
 LOCAL_LDLIBS    := -lm -llog
 LOCAL_MODULE    := libpersonhealth
 LOCAL_C_INCLUDES := $(JNI_H_INCLUDE)
@@ -29,7 +30,7 @@ LOCAL_SRC_FILES := com_noahedu_person_health_engine_Engine.cpp \
 
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := optional
-LOCAL_LDFLAGS := $(LOCAL_PATH)/libvideodecryptkey.a
+#LOCAL_LDFLAGS := $(LOCAL_PATH)/libvideodecryptkey.a
 LOCAL_SHARED_LIBRARIES := \
 				liblog 
 include $(BUILD_SHARED_LIBRARY)

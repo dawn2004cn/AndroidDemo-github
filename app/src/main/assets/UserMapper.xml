@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.noahedu.demo.mybatis.dao.UserMapper">
+    <resultMap id="userMap" type="com.noahedu.demo.mybatis.dao.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+    </resultMap>
+ 
+    <insert id="insert" parameterType="com.noahedu.demo.mybatis.dao.User">
+      insert into tb_user (
+             username,
+             sex,
+             age
+              )
+      VALUES (
+            #{username},
+            #{sex},
+            #{age}
+          )
+    </insert>
+    <update id="update" parameterType="com.noahedu.demo.mybatis.dao.User">
+        update tb_user
+        set username=#{username},
+            sex=#{sex},
+            age = #{age}
+        where id=#{id}
+    </update>
+ 
+    <delete id="delete">
+        DELETE FROM tb_user
+        WHERE id = #{id}
+        <!--IN
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>-->
+    </delete>
+ 
+    <select id="select" parameterType="java.lang.Integer" resultMap="userMap">
+        select id, username, sex, age
+        from tb_user
+        where id = #{id}
+    </select>
+ 
+    <select id="selectAll" resultMap="userMap">
+        select id,username,sex,age
+        from tb_user
+    </select>
+ 
+</mapper>

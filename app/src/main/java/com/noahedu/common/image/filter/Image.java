@@ -87,7 +87,7 @@ public class Image {
                 r = (colorArray[index] >> 16) & 0xff;
                 g = (colorArray[index] >> 8) & 0xff;
                 b = colorArray[index] & 0xff;
-                colorArray[index] = 0xff000000 | (b << 16) | (g << 8) | r;//androidϵͳ��windowϵͳ��rgb�洢��ʽ�෴
+                colorArray[index] = 0xff000000 | (b << 16) | (g << 8) | r;//android系统与window系统的rgb存储方式相反
             }
         }               
     }
@@ -139,7 +139,7 @@ public class Image {
         //image.setPixel(x, y, colorArray[((y*image.getWidth()+x))]);
     }
     
-    public void copyPixelsFromBuffer() { //�ӻ�������copy�����Լӿ����ش����ٶ�          	
+    public void copyPixelsFromBuffer() { //从缓冲区中copy数据以加快像素处理速度          	
     	IntBuffer vbb = IntBuffer.wrap(colorArray);    	
         //vbb.put(colorArray);
         destImage.copyPixelsFromBuffer(vbb);

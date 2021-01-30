@@ -39,10 +39,19 @@ JNIEXPORT jobjectArray JNICALL Java_com_noahedu_person_health_engine_Engine_nati
 /*
  * Class:     com_noahedu_person_health_engine_Engine
  * Method:    nativeGetPictureInfo
- * Signature: (II)[B
+ * Signature: (ILjava/lang/String;I)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_noahedu_person_health_engine_Engine_nativeGetPictureInfo
-  (JNIEnv *, jclass, jint, jint);
+  (JNIEnv *, jclass, jint, jstring, jint);
+
+/*
+ * Class:     com_noahedu_person_health_engine_Engine
+ * Method:    nativeGetSignature
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_noahedu_person_health_engine_Engine_nativeGetSignature
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

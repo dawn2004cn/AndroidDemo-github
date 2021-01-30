@@ -21,7 +21,7 @@ package com.noahedu.common.image.filter;
 
 public class MirrorFilter implements IImageFilter{
 	/**
-     * ���ӷ���
+     * 镜子方向
      */
    private boolean IsHorizontal = true;
 

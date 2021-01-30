@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ˮ����Ч��
+ * 水波纹效果
  * @author daizhj
  *
  */
@@ -47,7 +47,7 @@ public class WaterWaveFilter  extends RadialDistortionFilter{
 		return imageIn;
     }
     
-    void DropStone(int x /*x����*/, int y /*y����*/, int stonesize /*��Դ�뾶*/, int stoneweight /*��Դ����*/)
+    void DropStone(int x /*x坐标*/, int y /*y坐标*/, int stonesize /*波源半径*/, int stoneweight /*波源能量*/)
     {
     	if ((x + stonesize) > width || (y + stonesize) > height || (x - stonesize) < 0 || (y - stonesize) < 0){
            return;
@@ -64,33 +64,33 @@ public class WaterWaveFilter  extends RadialDistortionFilter{
 
     void RippleSpread() {
     	 for (int i=width; i<width*height-width; i++){
-		      //������ɢ
+		      //波能扩散
 		      buf2[i] =(short)(((buf1[i-1]+buf1[i+1]+buf1[i-width]+buf1[i+width])>>1)- buf2[i]);
-		      //����˥��
+		      //波能衰减
 		      buf2[i] -= buf2[i]>>5;
 	     }
-	     //�����������ݻ�����
+	     //交换波能数据缓冲区
 	     short []tmp =buf1;
 	     buf1 = buf2;
 	     buf2 = tmp;
     }
    
    
-    /* ��Ⱦ��ˮ��Ч�� */
+    /* 渲染你水纹效果 */
     void render() {
     	 int xoff, yoff;
 	     int k = width;
 	     for (int i=1; i<height-1; i++) {
 		      for (int j=0; j<width; j++) {
-			       //����ƫ����
+			       //计算偏移量
 			       xoff = buf1[k-1]-buf1[k+1];
 			       yoff = buf1[k-width]-buf1[k+width];
-			       //�ж������Ƿ��ڴ��ڷ�Χ��
+			       //判断坐标是否在窗口范围内
 			       if ((i+yoff )< 0 || (i+yoff )>= height || (j+xoff )< 0 || (j+xoff )>= width) {
 			    	   k++; 
 			    	   continue;
 			       }
-			       //�����ƫ�����غ�ԭʼ���ص��ڴ��ַƫ����		       
+			       //计算出偏移象素和原始象素的内存地址偏移量		       
 			       // image.setPixelColour(j, i, clone.getPixelColour(j+xoff, i+yoff));	
 			       int pos1, pos2;
 	    		   pos1=width*(i+yoff)+ (j+xoff);

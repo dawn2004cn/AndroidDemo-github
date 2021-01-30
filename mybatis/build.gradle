@@ -1,0 +1,86 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION as int
+        targetSdkVersion TARGET_SDK_VERSION as int
+
+        versionCode = VERSION_CODE
+        versionName = VERSION_NAME
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jni.srcDirs = ['jni']
+            //jniLibs.srcDirs = ['libs']
+        }
+
+        //instrumentTest.setRoot('tests')
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    packagingOptions{
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
+  /*  android.libraryVariants.all { variant ->
+        if (variant.buildType.isDebuggable()) {
+            return; // Skip debug builds.
+        }
+        task("javadoc${variant.name.capitalize()}", type: Javadoc) {
+            description "Generates Javadoc for $variant.name."
+            source = variant.javaCompile.source
+            ext.androidJar = System.getenv("ANDROID_HOME") + "/platforms/${android.compileSdkVersion}/android.jar"
+            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+        }
+
+        task("bundleJavadoc${variant.name.capitalize()}", type: Jar) {
+            description "Bundles Javadoc into zip for $variant.name."
+            classifier = "javadoc"
+            from tasks["javadoc${variant.name.capitalize()}"]
+        }
+    }*/
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //compile 'org.sqldroid:sqldroid:1.0.3'
+/*    compile files('libs/sqldroid-1.0.3.jar')*/
+    compile files('libs/droid-java-beans-1.0.1.jar')
+/*    compile 'com.android.support:appcompat-v7:28.0.0'
+    compile 'commons-logging:commons-logging:1.2'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'*/
+    compile 'org.javassist:javassist:3.17.1-GA'
+    compile 'cglib:cglib:2.2.2'
+    //testCompile 'org.robolectric:robolectric:4.2.1'
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'org.slf4j:slf4j-log4j12:1.7.5'
+    compile 'log4j:log4j:1.2.17'
+   //testCompile files('libs/robolectric-4.3.1.jar')
+    compile files('libs/roboguice-3.0.1.jar')
+    provided files('libs/roboblender-3.0.1.jar')
+    //compile 'org.roboguice:roboguice:3.0.1'
+    //provided 'org.roboguice:roboblender:3.0.1'
+}
+
+/*gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-AguiceAnnotationDatabasePackageName=id.co.hijr.app"
+    }
+}*/
+
+apply from: 'android-artifacts.gradle'
+apply from: 'central-publish.gradle'

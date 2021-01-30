@@ -17,17 +17,22 @@
 package jp.co.cyberagent.android.gpuimage;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -38,13 +43,21 @@ import java.io.FileOutputStream;
 import java.nio.IntBuffer;
 import java.util.concurrent.Semaphore;
 
-public class GPUImageView extends FrameLayout {
+import jp.co.cyberagent.android.gpuimage.view.GLTextureView;
 
-    private GLSurfaceView mGLSurfaceView;
+import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_SURFACE_VIEW;
+import static jp.co.cyberagent.android.gpuimage.GPUImage.SURFACE_TYPE_TEXTURE_VIEW;
+public class GPUImageView extends FrameLayout {
+    private String TAG = GPUImageView.class.getSimpleName();
+    private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
+    private View mGLSurfaceView;
     private GPUImage mGPUImage;
+    private boolean isShowLoading = true;
     private GPUImageFilter mFilter;
     public Size mForceSize = null;
     private float mRatio = 0.0f;
+    public final static int RENDERMODE_WHEN_DIRTY = 0;
+    public final static int RENDERMODE_CONTINUOUSLY = 1;
 
     public GPUImageView(Context context) {
         super(context);
@@ -57,10 +70,24 @@ public class GPUImageView extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
+        if (attrs != null) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.GPUImageView, 0, 0);
+            try {
+                surfaceType = a.getInt(R.styleable.GPUImageView_gpuimage_surface_type, surfaceType);
+                isShowLoading = a.getBoolean(R.styleable.GPUImageView_gpuimage_show_loading, isShowLoading);
+            } finally {
+                a.recycle();
+            }
+        }
+        mGPUImage = new GPUImage(context);
+        if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            mGLSurfaceView = new GPUImageGLTextureView(context, attrs);
+            mGPUImage.setGLTextureView((GLTextureView) mGLSurfaceView);
+        } else {
+            mGLSurfaceView = new GPUImageGLSurfaceView(context, attrs);
+            mGPUImage.setGLSurfaceView((GLSurfaceView) mGLSurfaceView);
+        }
         addView(mGLSurfaceView);
-        mGPUImage = new GPUImage(getContext());
-        mGPUImage.setGLSurfaceView(mGLSurfaceView);
     }
 
     @Override
@@ -107,6 +134,26 @@ public class GPUImageView extends FrameLayout {
         mGPUImage.setBackgroundColor(red, green, blue);
     }
 
+    /**
+     * Set the rendering mode. When renderMode is
+     * RENDERMODE_CONTINUOUSLY, the renderer is called
+     * repeatedly to re-render the scene. When renderMode
+     * is RENDERMODE_WHEN_DIRTY, the renderer only rendered when the surface
+     * is created, or when {@link #requestRender} is called. Defaults to RENDERMODE_CONTINUOUSLY.
+     *
+     * @param renderMode one of the RENDERMODE_X constants
+     * @see #RENDERMODE_CONTINUOUSLY
+     * @see #RENDERMODE_WHEN_DIRTY
+     * @see GLSurfaceView#setRenderMode(int)
+     * @see GLTextureView#setRenderMode(int)
+     */
+    public void setRenderMode(int renderMode) {
+        if (mGLSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mGLSurfaceView).setRenderMode(renderMode);
+        } else if (mGLSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mGLSurfaceView).setRenderMode(renderMode);
+        }
+    }
     // TODO Should be an xml attribute. But then GPUImage can not be distributed as .jar anymore.
     public void setRatio(float ratio) {
         mRatio = ratio;
@@ -181,7 +228,11 @@ public class GPUImageView extends FrameLayout {
     }
 
     public void requestRender() {
-        mGLSurfaceView.requestRender();
+        if (mGLSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mGLSurfaceView).requestRender();
+        } else if (mGLSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mGLSurfaceView).requestRender();
+        }
     }
 
     /**
@@ -333,14 +384,22 @@ public class GPUImageView extends FrameLayout {
      * Pauses the GLSurfaceView.
      */
     public void onPause() {
-        mGLSurfaceView.onPause();
+        if (mGLSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mGLSurfaceView).onPause();
+        } else if (mGLSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mGLSurfaceView).onPause();
+        }
     }
 
     /**
      * Resumes the GLSurfaceView.
      */
     public void onResume() {
-        mGLSurfaceView.onResume();
+        if (mGLSurfaceView instanceof GLSurfaceView) {
+            ((GLSurfaceView) mGLSurfaceView).onResume();
+        } else if (mGLSurfaceView instanceof GLTextureView) {
+            ((GLTextureView) mGLSurfaceView).onResume();
+        }
     }
 
     public static class Size {
@@ -359,6 +418,26 @@ public class GPUImageView extends FrameLayout {
         }
 
         public GPUImageGLSurfaceView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            if (mForceSize != null) {
+                super.onMeasure(MeasureSpec.makeMeasureSpec(mForceSize.width, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(mForceSize.height, MeasureSpec.EXACTLY));
+            } else {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+        }
+    }
+
+    private class GPUImageGLTextureView extends GLTextureView {
+        public GPUImageGLTextureView(Context context) {
+            super(context);
+        }
+
+        public GPUImageGLTextureView(Context context, AttributeSet attrs) {
             super(context, attrs);
         }
 
@@ -438,6 +517,7 @@ public class GPUImageView extends FrameLayout {
             File file = new File(path, folderName + "/" + fileName);
             try {
                 file.getParentFile().mkdirs();
+                Log.v(TAG,"saveImage file path:"+file.getAbsolutePath());
                 image.compress(Bitmap.CompressFormat.JPEG, 80, new FileOutputStream(file));
                 MediaScannerConnection.scanFile(getContext(),
                         new String[]{

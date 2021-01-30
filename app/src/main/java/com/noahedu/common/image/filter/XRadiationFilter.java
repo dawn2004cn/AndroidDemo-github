@@ -27,7 +27,7 @@ import com.noahedu.common.image.filter.ImageBlender.BlendMode;
 import android.graphics.Color;
 
 /**
- * X��Ч��
+ * X光效果
  * @author daizhj
  *
  */

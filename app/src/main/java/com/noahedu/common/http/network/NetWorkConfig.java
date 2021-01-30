@@ -2,6 +2,7 @@ package com.noahedu.common.http.network;
 
 import android.content.Context;
 
+import com.noahedu.common.util.LogUtils;
 import com.socks.library.KLog;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class NetWorkConfig {
     }
 
 
-//===================提供对外调用===================================开始=======================================================
+    //===================提供对外调用===================================开始=======================================================
     /**
      * get请求模式
      */
@@ -143,14 +144,23 @@ public class NetWorkConfig {
         SSLSocketFactory sslSocketFactory = config.sslSocketFactory();
         X509TrustManager trustManager = config.x509TrustManager();
         HostnameVerifier hostnameVerifier = config.hostNameVerifier();
-        KLog.e("baseUrl--->" + baseUrl  + "    " + "headerMap--->" + headerMap.size());
-        RetrofitFactory factory = new RetrofitFactory.Builder()
-                .setHeaders(headerMap)
-                .setBaseUrl(baseUrl)
-                .setSSLSocketFactory(sslSocketFactory,trustManager,hostnameVerifier)
-                .build();
-        return factory;
+        LogUtils.v("baseUrl--->" + baseUrl  + "    " + "headerMap--->" + headerMap.size());
+        if (sslSocketFactory != null) {
+            RetrofitFactory factory = new RetrofitFactory.Builder()
+                    .setHeaders(headerMap)
+                    .setBaseUrl(baseUrl)
+                    .setSSLSocketFactory(sslSocketFactory, trustManager, hostnameVerifier)
+                    .build();
+            return factory;
+        }
+        else
+        {
+            RetrofitFactory factory = new RetrofitFactory.Builder()
+                    .setHeaders(headerMap)
+                    .setBaseUrl(baseUrl)
+                    .build();
+            return factory;
+
+        }
     }
-
-
 }

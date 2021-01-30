@@ -1,6 +1,7 @@
 package com.noahedu.demo.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,10 +14,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.noahedu.utils.ImageUtil;
+import com.noahedu.utils.ImageUtils;
 
 /**
  * apk util
@@ -28,8 +34,10 @@ import android.util.Log;
  */
 public class ApkUtils {
 
-    static  String TAG = "ApkTool";
+    static  String TAG = ApkUtils.class.getSimpleName();
     public static List<MyAppInfo> mLocalInstallApps = null;
+
+    public  static String Path = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/tmp";
     /**
      * get UnInstallApkPackageName
      *
@@ -110,7 +118,7 @@ public class ApkUtils {
     }
     
     
-    public static List<MyAppInfo> queryAppInfo(Context ctx) {  
+    public static List<MyAppInfo> queryAppInfo(Context ctx) {
     	List<MyAppInfo> mlistAppInfo = new ArrayList<MyAppInfo>();  
         PackageManager pm = ctx.getPackageManager();  
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);  
@@ -126,7 +134,15 @@ public class ApkUtils {
                 String activityName = resolveInfo.activityInfo.name; 
                 String pkgName = resolveInfo.activityInfo.packageName;  
                 String appLabel = (String)resolveInfo.loadLabel(pm);   
-                Drawable icon = resolveInfo.loadIcon(pm); 
+                Drawable icon = resolveInfo.loadIcon(pm);
+                Bitmap bt = ImageUtils.drawableToBitmap(icon);
+                String name = appLabel+"-"+activityName+".jpg";
+                try {
+                    ImageUtils.saveImageToSD(ctx.getCacheDir().getAbsolutePath(),name,bt,100);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 Log.v("ii", "类名:"+activityName+";包名:"+pkgName +";应用名:"+appLabel);  
               
                 Intent launchIntent = new Intent();  

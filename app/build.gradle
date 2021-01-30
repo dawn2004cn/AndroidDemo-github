@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 //apply plugin: 'Java'
 android {
-    compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    compileSdkVersion COMPILE_SDK_VERSION as int
+    buildToolsVersion BUILD_TOOLS_VERSION
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -12,11 +12,20 @@ android {
         minSdkVersion MIN_SDK_VERSION as int
         targetSdkVersion TARGET_SDK_VERSION as int
         multiDexEnabled true
-
+       externalNativeBuild {
+            ndkBuild {
+                //path file('src/main/jni/Android.mk')
+                //指定Application.mk的路径
+                arguments "NDK_APPLICATION_MK:=src/main/jni/Application.mk","NDK_LIBS_OUT=./libs"//,"NDK_OUT=./out/local"
+                //cFlags 和cppFlag 是用来设置环境变量的，一般不需要动
+                cFlags "-DTEST_C_FLAG1","-DTEST_C_FLAG2"
+                cppFlags "-DTEST_CPP_FLAG2","-DTEST_CPP_FLAG2"
+            }
+        }
         ndk {
-            moduleName "libpersonhealth"
+            moduleName "personhealth"
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'arm64-v8a','armeabi-v7a'
             // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
         }
         javaCompileOptions {
@@ -25,28 +34,58 @@ android {
             }
         }
     }
-
+ /*   externalNativeBuild {
+        ndkBuild {
+            path file('src/main/jni/Android.mk')
+        }
+    }*/
     buildTypes {
+        debug {
+            debuggable true
+            zipAlignEnabled false
+            minifyEnabled false
+            //proguardFiles 'proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
         release {
+            debuggable false
+            zipAlignEnabled true
             minifyEnabled true
-            proguardFiles 'proguard.cfg'
+            //proguardFiles 'proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
     }
-    sourceSets {
+   sourceSets {
         main {
-            /*manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']*/
             jniLibs.srcDirs = ['libs']
+            // jni.srcDirs = []
+            //jniLibs.srcDir 'src/main/libs'
         }
     }
 
     lintOptions {
-        abortOnError true
+        abortOnError false
+    }
+
+    // 1.加入这句话
+    useLibrary 'org.apache.http.legacy'
+
+    // 2.加入以下这些
+    packagingOptions{
+        //doNotStrip "*/arm64-v8a/*.so"
+        //doNotStrip "*/armeabi-v7a/*.so"
+        //doNotStrip "*/armeabi/*.so"
+        //exclude "*/armeabi/**"
+        //exclude "*/arm64-v8a/**"
+        //exclude "*/armeabi-v7a/**"
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'okhttp3/internal/publicsuffix/publicsuffixes.gz'
     }
 }
 ////使用shadow插件打包，代替jar功能。
@@ -59,6 +98,7 @@ android {
         from configurations.runtime
     }
 }*/
+
 //解决冲突 同一版本
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -75,7 +115,13 @@ dependencies {
 //    compile project(':library')
 
     implementation project(':library')
+    implementation project(':video-support')
+    implementation project (':mybatis')
     implementation project(':VideoPlayModule')
+    implementation project(':latexlibrary')
+//    implementation project(':baidu_asr_core')
+//    implementation project(':baidu_uiasr')
+//    implementation project(':baidu_uidialog')
 
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
     /*implementation 'com.android.support:appcompat-v7:28.0.0'
@@ -83,32 +129,29 @@ dependencies {
          force = true
      }
      implementation 'com.android.support:support-compat:28.0.0'*/
-    implementation 'com.android.support:appcompat-v7:23.4.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    //implementation 'com.android.support:appcompat-v7:23.4.0'
 
-    /*  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-     implementation 'com.blankj:utilcode:1.18.0'
-     implementation 'com.yanzhenjie.permission:support:2.0.1'
-     implementation 'com.jakewharton:butterknife:8.8.1'*/
+    //implementation 'com.android.support:appcompat-v7:26.1.0'
 
     implementation files('libs/aip-java-sdk-4.11.3.jar')
-    //compile files('libs/android-support-v13.jar')
+    implementation files('libs/bdasr_V3_20191210_81acdf5.jar')
+    implementation files('libs/com.baidu.tts_2.6.1.106.20191213_e6dcd95.jar')
+
     implementation files('libs/android-support-v7-mediarouter.jar')
-    implementation files('libs/com.baidu.tts_2.3.2.20180713_6101c2a.jar')
     implementation files('libs/jaudiotagger-2.2.6-SNAPSHOT.jar')
     implementation files('libs/json-20160810.jar')
     //implementation files('libs/Msc.jar')
     implementation files('libs/musicg-1.4.2.0.jar')
     //implementation files('libs/okhttp-3.8.1.jar')
-    implementation files('libs/slf4j-api-1.7.25.jar')
-    implementation files('libs/slf4j-simple-1.7.25.jar')
+    //implementation files('libs/slf4j-api-1.7.25.jar')
+    //implementation files('libs/slf4j-simple-1.7.25.jar')
     implementation files('libs/Sunflower.jar')
     implementation files('libs/XiriFeedback.jar')
     implementation files('libs/XiriScene.jar')
-    //implementation files('libs/gson-2.7.jar')
     //小企鹅乐园
     implementation files('libs/lib_vod_xqe_1.0.20191209.jar')
-
+    //公共jar
+    //compileOnly files('libs/com.noahedu.jar')
 
     implementation files('libs/gson-2.8.5.jar')
     implementation files('libs/adapter-rxjava2-2.5.0.jar')
@@ -121,7 +164,16 @@ dependencies {
     implementation files('libs/reactive-streams-1.0.0.jar')
     implementation files('libs/converter-scalars-2.6.0.jar')
     implementation files('libs/klog.jar')
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation files('libs/bakersynthesizer.jar')
+    implementation files('libs/fmath-mathml-java-v3.1.jar')
+    //implementation files('libs/disruptor-3.4.2.jar')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation ('com.github.svga:SVGAPlayer-Android:2.5.13',{
+        exclude group:'com.squareup.okio',module:'okio'
+    })
+    //exoplayer
     implementation('com.google.android.exoplayer:exoplayer-core:2.10.4', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-compat'
@@ -141,6 +193,23 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-core-utils'
     })
     implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.facebook.fresco:animated-webp:1.5.0'
+    implementation 'com.facebook.fresco:animated-gif:1.5.0'
+    implementation 'com.karumi:dexter:4.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    //implementation 'com.google.code.gson:gson:2.8.6'
+    //implementation 'com.android.support:multidex:1.0.3'
+    // https://mvnrepository.com/artifact/com.lmax/disruptor
+    //implementation group: 'com.lmax', name: 'disruptor', version: '3.4.2'
+    /*  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+     implementation 'com.blankj:utilcode:1.18.0'
+     implementation 'com.yanzhenjie.permission:support:2.0.1'
+     implementation 'com.jakewharton:butterknife:8.8.1'*/
+    //3.加入以下这些
+    //noinspection DuplicatePlatformClasses
+    api 'org.apache.httpcomponents:httpclient:4.5.6'
+    implementation 'com.huangyz0918:androidwm:0.2.3'
 }
 
 /*task copyJars(type: Copy) {

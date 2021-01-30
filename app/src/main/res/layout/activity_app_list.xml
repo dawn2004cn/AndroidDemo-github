@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.noahedu.demo.AppListActivity">
+    tools:context="com.noahedu.demo.activity.PersionHealthActivity">
     <ListView
         android:id="@+id/lv_app_list"
         android:layout_width="match_parent"

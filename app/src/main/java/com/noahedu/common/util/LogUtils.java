@@ -8,27 +8,27 @@ import android.util.Log;
  */
 public class LogUtils {
 
-    private static final String TAG = "LOGUTILS";
+    private static final String TAG = LogUtils.class.getSimpleName();
     private static boolean LOG_ENABLE = true;
     private static boolean DETAIL_ENABLE = true;
 
     private static String buildMsg(String msg) {
         StringBuilder buffer = new StringBuilder();
 
-//        if (DETAIL_ENABLE) {
-//            final StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[4];
-//
-//            buffer.append("[ ");
-//            buffer.append(Thread.currentThread().getName());
-//            buffer.append(": ");
-//            buffer.append(stackTraceElement.getFileName());
-//            buffer.append(": ");
-//            buffer.append(stackTraceElement.getLineNumber());
-//            buffer.append(": ");
-//            buffer.append(stackTraceElement.getMethodName());
-//        }
+        if (DETAIL_ENABLE) {
+            final StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[4];
 
-//        buffer.append("() ] _____ ");
+            buffer.append("[ ");
+            buffer.append(Thread.currentThread().getName());
+            buffer.append(": ");
+            buffer.append(stackTraceElement.getFileName());
+            buffer.append(": ");
+            buffer.append(stackTraceElement.getLineNumber());
+            buffer.append(": ");
+            buffer.append(stackTraceElement.getMethodName());
+            buffer.append("() ] _____ ");
+        }
+
 
         buffer.append(msg);
 
@@ -43,21 +43,30 @@ public class LogUtils {
         LOG_ENABLE = enable;
     }
 
-//    /**
-//     * 设置是否显示详细Log
-//     * @param isdetail true-显示详细 false-不显示详细
-//     */
-//    public static void setLogDetail(boolean isdetail) {
-//        DETAIL_ENABLE = isdetail;
-//    }
+    /**
+     * 设置是否显示详细Log
+     * @param isdetail true-显示详细 false-不显示详细
+     */
+    public static void setLogDetail(boolean isdetail) {
+        DETAIL_ENABLE = isdetail;
+    }
 
+    /**
+     * verbose log
+     */
+    public  static void v()
+    {
+        if (LOG_ENABLE) {
+            System.out.println();
+        }
+    }
     /**
      * verbose log
      * @param msg log msg
      */
     public static void v(String msg) {
         if (LOG_ENABLE) {
-            Log.v(TAG, buildMsg(msg));
+            Log.v(getTag(), buildMsg(msg));
         }
     }
 
@@ -78,7 +87,7 @@ public class LogUtils {
      */
     public static void d(String msg) {
         if (LOG_ENABLE) {
-            Log.d(TAG, buildMsg(msg));
+            Log.d(getTag(), buildMsg(msg));
         }
     }
 
@@ -99,7 +108,7 @@ public class LogUtils {
      */
     public static void i(String msg) {
         if (LOG_ENABLE) {
-            Log.i(TAG, buildMsg(msg));
+            Log.i(getTag(), buildMsg(msg));
         }
     }
 
@@ -110,7 +119,7 @@ public class LogUtils {
      */
     public static void i(String tag, String msg) {
         if (LOG_ENABLE) {
-            Log.i(tag, buildMsg(msg));
+            Log.i(getTag(), buildMsg(msg));
         }
     }
 
@@ -120,7 +129,7 @@ public class LogUtils {
      */
     public static void w(String msg) {
         if (LOG_ENABLE) {
-            Log.w(TAG, buildMsg(msg));
+            Log.w(getTag(), buildMsg(msg));
         }
     }
 
@@ -131,7 +140,7 @@ public class LogUtils {
      */
     public static void w(String msg, Exception e) {
         if (LOG_ENABLE) {
-            Log.w(TAG, buildMsg(msg), e);
+            Log.w(getTag(), buildMsg(msg), e);
         }
     }
 
@@ -164,7 +173,7 @@ public class LogUtils {
      */
     public static void e(String msg) {
         if (LOG_ENABLE) {
-            Log.e(TAG, buildMsg(msg));
+            Log.e(getTag(), buildMsg(msg));
         }
     }
 
@@ -175,7 +184,7 @@ public class LogUtils {
      */
     public static void e(String msg, Exception e) {
         if (LOG_ENABLE) {
-            Log.e(TAG, buildMsg(msg), e);
+            Log.e(getTag(), buildMsg(msg), e);
         }
     }
 
@@ -200,5 +209,11 @@ public class LogUtils {
         if (LOG_ENABLE) {
             Log.e(tag, buildMsg(msg), e);
         }
+    }
+
+    private static String getTag()
+    {
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
+        return stackTraceElement.getFileName();
     }
 }

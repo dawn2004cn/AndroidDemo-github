@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ������㣨����Ч����
+ * 卷积运算（光照效果）
  * @author daizhj
  *
  */

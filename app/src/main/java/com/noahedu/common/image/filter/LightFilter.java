@@ -19,14 +19,14 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ����Ч��
+ * 光照效果
  * @author daizhj
  *
  */
 public class LightFilter extends RadialDistortionFilter{
 
 	/**
-	 * ��������
+	 * 光照亮度
 	 */
 	public float Light = 150.0f;
     
@@ -37,7 +37,7 @@ public class LightFilter extends RadialDistortionFilter{
        int height = imageIn.getHeight();
        int halfh = height / 2;
        int R = Math.min(halfw, halfh);
-       //���ĵ㣬������ֵ����ǿ�����ķ���ƫ��
+       //中心点，发亮此值会让强光中心发生偏移
        Point point = new Point(halfw, halfh);
        int r = 0, g = 0, b = 0;
        for (int x = 0; x < width; x++) {
@@ -46,7 +46,7 @@ public class LightFilter extends RadialDistortionFilter{
             	 r = imageIn.getRComponent(x, y);
             	 g = imageIn.getGComponent(x, y);
             	 b = imageIn.getBComponent(x, y);
-            	 //λ�ڹ�����
+            	 //位于光晕中
             	 if(length < R) {
             		  float pixel = Light * (1.0f - length /R);
 	            	  r = r + (int)pixel;

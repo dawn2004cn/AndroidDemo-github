@@ -1,0 +1,90 @@
+package com.noahedu.similarphoto.utils;
+
+import com.noahedu.similarphoto.ImageUtil;
+
+import android.graphics.Bitmap;
+
+public class PyramidBlendProcessor extends PyramidAlgorithm
+{
+		Bitmap image1;  
+		Bitmap image2;   
+		Bitmap maskImg;    
+	    public PyramidBlendProcessor(Bitmap image1, Bitmap image2, Bitmap maskImage)  
+	    {  
+	        this.image1 = image1;  
+	        this.image2 = image2;  
+	        this.maskImg = createMaskImage(image1, image2, maskImage);  
+	    }  
+	      
+	    public Bitmap mergeMaskWithResult(Bitmap[] blendResults)  
+	    {  
+	    	Bitmap[] image1Lapls = this.pyramidUp(this.pyramidDown(maskImg));  
+	    	Bitmap result = null;  
+	        int size = blendResults.length;  
+	        for(int i=size - 1; i>=0; i--)  
+	        {  
+	            if((i-1) < 0){  
+	                result = this.collapse(image1Lapls[i], blendResults[i]);  
+	            } else {  
+	                image1Lapls[i-1] = this.pyramidExpand(this.collapse(image1Lapls[i], blendResults[i]), image1Lapls[i-1].getWidth(), image1Lapls[i-1].getHeight());     
+	            }  
+	        }  
+	        // return image1Lapls[0];  
+	        return result;  
+	    }  
+	      
+	    private Bitmap createMaskImage(Bitmap image12,  
+	    		Bitmap image22, Bitmap maskImage) {  
+	        int width = image1.getWidth();  
+	        int height = image1.getHeight();  
+	        //Bitmap realMaskImg = createCompatibleDestImage( image1, null );  
+	        Bitmap realMaskImg = Bitmap.createBitmap(image1);    
+	  
+	        int[] image1Pixels = new int[width*height];  
+	        int[] image2Pixels = new int[width*height];  
+	        int[] maskPixels = new int[width*height];  
+	        int[] outPixels = new int[width*height];  
+	        //getRGB( image1, 0, 0, width, height, image1Pixels );  
+	        //getRGB( image2, 0, 0, width, height, image2Pixels );  
+	        //getRGB( maskImage, 0, 0, width, height, maskPixels );  
+
+	        image1Pixels = ImageUtil.getColors(image1, width, height);
+	        image2Pixels = ImageUtil.getColors(image2, width, height);
+	        maskPixels = ImageUtil.getColors(maskImage, width, height);
+	        int index = 0;  
+	        for(int row=0; row<height; row++) {  
+	            int ta1 = 0, tr1 = 0, tg1 = 0, tb1 = 0;  
+	            int ta2 = 0, tr2 = 0, tg2 = 0, tb2 = 0;  
+	            int ma = 0, mr = 0, mg = 0, mb = 0;  
+	            for(int col=0; col<width; col++) {  
+	                index = row * width + col;  
+	                ta1 = (image1Pixels[index] >> 24) & 0xff;  
+	                tr1 = (image1Pixels[index] >> 16) & 0xff;  
+	                tg1 = (image1Pixels[index] >> 8) & 0xff;  
+	                tb1 = image1Pixels[index] & 0xff;  
+	                  
+	                ta2 = (image2Pixels[index] >> 24) & 0xff;  
+	                tr2 = (image2Pixels[index] >> 16) & 0xff;  
+	                tg2 = (image2Pixels[index] >> 8) & 0xff;  
+	                tb2 = image2Pixels[index] & 0xff;  
+	                  
+	                ma = (maskPixels[index] >> 24) & 0xff;  
+	                mr = (maskPixels[index] >> 16) & 0xff;  
+	                mg = (maskPixels[index] >> 8) & 0xff;  
+	                mb = maskPixels[index] & 0xff;  
+	                if(mr < 127) {  
+	                    outPixels[index] = (ta1 << 24) | (tr1 << 16) | (tg1 << 8) | tb1;  
+	                } else if(mr >=127) {  
+	                    outPixels[index] = (ta2 << 24) | (tr2 << 16) | (tg2 << 8) | tb2;  
+	                } else {  
+	                    //outPixels[index] = (ta2 << 24) | (mr << 16) | (mg << 8) | mb;  
+	                }  
+	                     
+	            }  
+	        }  
+	        //setRGB( realMaskImg, 0, 0, width, height, outPixels );  
+	        realMaskImg = ImageUtil.createBitmap(outPixels, width, height);
+	        return realMaskImg;  
+	    }  
+
+}

@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * �������AndroidImage����
+ * 混合两个AndroidImage对象
  * @author daizhj
  *
  */
@@ -181,7 +181,7 @@ public class ImageBlender {
 				        break;
 		            }
 		            case 12:{ //Frame
-		            	if((r2 ==0 && g2 == 0 && r2 ==0)){//̽��߿���ɫ(r2 > 230 && g2 > 230 && b2 > 230) || 
+		            	if((r2 ==0 && g2 == 0 && r2 ==0)){//探测边框颜色(r2 > 230 && g2 > 230 && b2 > 230) || 
 		            		r = r1;
 				            g = g1;
 				            b = b1;    

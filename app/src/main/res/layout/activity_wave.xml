@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.cokus.audiocanvaswave.MainActivity">
+    tools:context="com.noahedu.audiorecorder.WaveActivity">
 
-    <com.cokus.wavelibrary.view.WaveSurfaceView
+    <com.noahedu.wavelibrary.view.WaveSurfaceView
         android:id="@+id/wavesfv"
         android:layout_width="fill_parent"
         android:layout_height="120dp"/>
 
-    <com.cokus.wavelibrary.view.WaveformView
+    <com.noahedu.wavelibrary.view.WaveformView
         android:id="@+id/waveview"
         android:visibility="invisible"
         android:layout_width="fill_parent"

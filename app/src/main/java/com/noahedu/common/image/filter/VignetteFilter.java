@@ -18,7 +18,7 @@
 
 package com.noahedu.common.image.filter;
 /**
- * Vignette�����Ч
+ * Vignette相机特效
  * @author daizhj
  *
  */

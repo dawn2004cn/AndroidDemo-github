@@ -24,7 +24,7 @@ import java.util.List;
 import android.graphics.Color;
 
 /**
- * ҹ��Ч��
+ * 夜视效果
  * @author daizhj
  *
  */

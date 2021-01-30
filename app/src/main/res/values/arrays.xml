@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--通过FrameAnimation播放的八十张图片-->
+    <array name="c">
+
+        <item>@drawable/c_1</item>
+        <item>@drawable/c_2</item>
+        <item>@drawable/c_3</item>
+        <item>@drawable/c_4</item>
+        <item>@drawable/c_5</item>
+        <item>@drawable/c_6</item>
+        <item>@drawable/c_7</item>
+        <item>@drawable/c_8</item>
+        <item>@drawable/c_9</item>
+        <item>@drawable/c_10</item>
+        <item>@drawable/c_11</item>
+        <item>@drawable/c_12</item>
+        <item>@drawable/c_13</item>
+        <item>@drawable/c_14</item>
+        <item>@drawable/c_15</item>
+        <item>@drawable/c_16</item>
+        <item>@drawable/c_17</item>
+        <item>@drawable/c_18</item>
+        <item>@drawable/c_19</item>
+        <item>@drawable/c_20</item>
+
+        <item>@drawable/down_1</item>
+        <item>@drawable/down_2</item>
+        <item>@drawable/down_3</item>
+        <item>@drawable/down_4</item>
+        <item>@drawable/down_5</item>
+        <item>@drawable/down_6</item>
+        <item>@drawable/down_7</item>
+        <item>@drawable/down_8</item>
+        <item>@drawable/down_9</item>
+        <item>@drawable/down_10</item>
+        <item>@drawable/down_11</item>
+        <item>@drawable/down_12</item>
+        <item>@drawable/down_13</item>
+        <item>@drawable/down_14</item>
+        <item>@drawable/down_15</item>
+        <item>@drawable/down_16</item>
+        <item>@drawable/down_17</item>
+        <item>@drawable/down_18</item>
+        <item>@drawable/down_19</item>
+        <item>@drawable/down_20</item>
+
+        <item>@drawable/e_1</item>
+        <item>@drawable/e_2</item>
+        <item>@drawable/e_3</item>
+        <item>@drawable/e_4</item>
+        <item>@drawable/e_5</item>
+        <item>@drawable/e_6</item>
+        <item>@drawable/e_7</item>
+        <item>@drawable/e_8</item>
+        <item>@drawable/e_9</item>
+        <item>@drawable/e_10</item>
+        <item>@drawable/e_11</item>
+        <item>@drawable/e_12</item>
+        <item>@drawable/e_13</item>
+        <item>@drawable/e_14</item>
+        <item>@drawable/e_15</item>
+        <item>@drawable/e_16</item>
+        <item>@drawable/e_17</item>
+        <item>@drawable/e_18</item>
+        <item>@drawable/e_19</item>
+        <item>@drawable/e_20</item>
+
+        <item>@drawable/circle_1</item>
+        <item>@drawable/circle_2</item>
+        <item>@drawable/circle_3</item>
+        <item>@drawable/circle_4</item>
+        <item>@drawable/circle_5</item>
+        <item>@drawable/circle_6</item>
+        <item>@drawable/circle_7</item>
+        <item>@drawable/circle_8</item>
+        <item>@drawable/circle_9</item>
+        <item>@drawable/circle_10</item>
+        <item>@drawable/circle_11</item>
+        <item>@drawable/circle_12</item>
+        <item>@drawable/circle_13</item>
+        <item>@drawable/circle_14</item>
+        <item>@drawable/circle_15</item>
+        <item>@drawable/circle_16</item>
+        <item>@drawable/circle_17</item>
+        <item>@drawable/circle_18</item>
+        <item>@drawable/circle_19</item>
+        <item>@drawable/circle_20</item>
+    </array>
+
+
+    <string-array name="akta">
+        <item>22,0,0,30,</item>
+        <item>22,0,30,0,</item>
+        <item>30,0,52,30,</item>
+        <item>0,30,26,30,</item>
+        <item>60,0,60,15,</item>
+        <item>60,15,60,30,</item>
+        <item>60,15,85,15,</item>
+        <item>85,15,108,0,</item>
+        <item>85,15,108,30,</item>
+        <item>117,0,147,0,</item>
+        <item>147,0,177,0,</item>
+        <item>147,0,147,32,</item>
+        <item>198,0,176,30,</item>
+        <item>198,0,206,0,</item>
+        <item>206,0,228,30,</item>
+        <item>176,30,202,30,</item>
+    </string-array>
+
+    <string-array name="storehouse">
+        <item>0,35,12,42,</item>
+        <item>12,42,24,35,</item>
+        <item>24,35,12,28,</item>
+        <item>0,35,12,28,</item>
+        <item>0,21,12,28,</item>
+        <item>12,28,24,21,</item>
+        <item>24,35,24,21,</item>
+        <item>24,21,12,14,</item>
+        <item>0,21,12,14,</item>
+        <item>0,21,0,7,</item>
+        <item>12,14,0,7,</item>
+        <item>12,14,24,7,</item>
+        <item>24,7,12,0,</item>
+        <item>0,7,12,0,</item>
+    </string-array>
+
+    <integer-array name="google_colors">
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+    </integer-array>
+</resources>

@@ -60,9 +60,9 @@ public class DesityUtils {
             case DisplayMetrics.DENSITY_XHIGH:
                 densityStr = "XHDPI";
                 break;
-/*            case DisplayMetrics.DENSITY_400:
+            case DisplayMetrics.DENSITY_400:
                 densityStr = "XMHDPI";
-                break;*/
+                break;
             case DisplayMetrics.DENSITY_XXHIGH:
                 densityStr = "XXHDPI";
                 break;

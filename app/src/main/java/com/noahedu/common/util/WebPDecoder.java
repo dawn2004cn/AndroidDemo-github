@@ -46,22 +46,22 @@ public class WebPDecoder {
 	    public static void main(String args[]) {
 	        String string = "http://ximalayaos.cos.xmcdn.com/storages/d717-ximalayaos/08/14/CMCoC10BfI3vAA7pQgABL_Mg.mp3?sign=1572255064-uhy1vywzo-0-76113b2b6b4dafbed44a4ae5dc43457a";  
 	        //查找指定字符是在字符串中的下标。在则返回所在字符串下标；不在则返回-1.  
-	        System.out.println(string.indexOf("?")); // indexOf(String str); 返回结果：-1，"b"不存在  
+			LogUtils.v(string.indexOf("?")+""); // indexOf(String str); 返回结果：-1，"b"不存在
 	 
 	        int ind = string.indexOf("?") ;
-	        System.out.println(string.substring(0, ind));
+			LogUtils.v(string.substring(0, ind));
 	        // 从第四个字符位置开始往后继续查找，包含当前位置  
-	        System.out.println(string.indexOf("a",3));//indexOf(String str, int fromIndex); 返回结果：6  
+			LogUtils.v(string.indexOf("a",3)+"");//indexOf(String str, int fromIndex); 返回结果：6
 	 
 	        //（与之前的差别：上面的参数是 String 类型，下面的参数是 int 类型）参考数据：a-97,b-98,c-99  
 	 
 	        // 从头开始查找是否存在指定的字符  
-	        System.out.println(string.indexOf(99));//indexOf(int ch)；返回结果：7  
-	        System.out.println(string.indexOf('c'));//indexOf(int ch)；返回结果：7  
+			LogUtils.v(string.indexOf(99)+"");//indexOf(int ch)；返回结果：7
+			LogUtils.v(string.indexOf('c')+"");//indexOf(int ch)；返回结果：7
 	 
 	        //从fromIndex查找ch，这个是字符型变量，不是字符串。字符a对应的数字就是97。  
-	        System.out.println(string.indexOf(97,3));//indexOf(int ch, int fromIndex); 返回结果：6  
-	        System.out.println(string.indexOf('a',3));//indexOf(int ch, int fromIndex); 返回结果：6  
+			LogUtils.v(string.indexOf(97,3)+"");//indexOf(int ch, int fromIndex); 返回结果：6
+			LogUtils.v(string.indexOf('a',3)+"");//indexOf(int ch, int fromIndex); 返回结果：6
 	    }
 	    
 }

@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ��ľЧ���������ڴ�������
+ * 积木效果，（用于处理人像）
  * @author daizhj
  *
  */

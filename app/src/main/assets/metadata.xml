@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="id.co.hijr.app.core.Metadata">
+
+	<resultMap type="metadata" id="metadataMap" extends="id.co.hijr.app.core.Entity.entityMap">
+		<result column="date_added" property="dateAdded" typeHandler="id.co.hijr.app.core.DateTimeTypeHandler"/>
+		<result column="user_added" property="userAdded"/>
+		<result column="date_modified" property="dateModified" typeHandler="id.co.hijr.app.core.DateTimeTypeHandler"/>
+		<result column="user_modified" property="userModified"/>
+		<result column="date_deleted" property="dateDeleted" typeHandler="id.co.hijr.app.core.DateTimeTypeHandler"/>
+		<result column="user_deleted" property="userDeleted"/>
+	</resultMap>
+
+	<sql id="field">
+		, date_added,user_added,date_modified,user_modified,date_deleted,user_deleted
+	</sql>
+	
+	<sql id="value">
+		, datetime('now', 'localtime'), #{userAdded:VARCHAR}, datetime('now', 'localtime'), #{userModified:VARCHAR}, null,null
+	</sql>
+	
+	<sql id="update">
+		date_modified=datetime('now', 'localtime'),
+		user_modified=#{userModified:VARCHAR},
+	</sql>	
+	
+	<sql id="delete">
+		date_deleted=datetime('now', 'localtime'),
+		user_deleted=#{userDeleted:VARCHAR}
+	</sql>	
+	
+	<sql id="restore">
+		date_deleted=null,
+		user_deleted=null
+	</sql>	
+	
+</mapper>	

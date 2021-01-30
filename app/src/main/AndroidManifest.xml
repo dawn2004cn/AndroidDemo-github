@@ -2,21 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.noahedu.demo"
     android:versionCode="35"
-    android:versionName="2.9.11" >
+    android:versionName="1.0.35" >
 
     <uses-sdk
-        android:targetSdkVersion="22"/>
+        android:targetSdkVersion="24"/>
 
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
- 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission>	
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>	
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-	<uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+ 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 	<uses-permission android:name="android.permission.CAMERA"/>
@@ -27,6 +27,11 @@
 	<uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission xmlns:tools="http://schemas.android.com/tools"
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="com.noahedu.audiorecorder.base.MyApp"
@@ -35,28 +40,36 @@
         android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme" >
-        <service android:name="com.noahedu.demo.MyService" />
-        <service android:name="com.noahedu.demo.MyIntentService" />
-        <service android:name="com.noahedu.demo.MyAIDLService" >
+
+        <!--android:requestLegacyExternalStorage="true"-->
+
+        <service android:name="com.noahedu.demo.service.MyService" />
+        <service android:name="com.noahedu.demo.service.MyIntentService" />
+        <service android:name="com.noahedu.demo.service.MyAIDLService" >
             <intent-filter>
                 <action android:name="com.noahedu.demo.remote.MyAIDLServiceAction" />
             </intent-filter>
         </service>
         
-        
         <service
-            android:name="com.noahedu.demo.DingDangService"
+            android:name="com.noahedu.demo.service.DingDangService"
             android:enabled="true"
+            android:exported="true"></service>
+
+        <service
+            android:name="com.noahedu.demo.service.TopWindowService"
             android:exported="true"></service>
 
         <service android:name="com.noahedu.recorderlib.recorder.RecordService"
             android:enabled="true"
             android:exported="false"></service>
+        <service android:name="com.noahedu.countdowntimer.CountDownTimerService"/>
 
         <activity
-            android:name="com.noahedu.demo.DemoList"
-            android:configChanges="orientation|keyboardHidden"
+            android:name="com.noahedu.demo.activity.DemoList"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:launchMode="standard"
             android:theme="@android:style/Theme.Holo.Light" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,7 +78,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.noahedu.demo.DownloadManagerDemo"
+            android:name="com.noahedu.demo.activity.DownloadManagerDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/download_manager_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
@@ -78,131 +91,152 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.noahedu.demo.ImageSDCardCacheDemo"
+            android:name="com.noahedu.demo.activity.ImageSDCardCacheDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/imagesdcardcache_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.CanvasDrawDemo"
+            android:name="com.noahedu.demo.activity.CanvasDrawDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/imagecache_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.ImageCacheDemo"
+            android:name="com.noahedu.demo.activity.ImageCacheDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/imagecache_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.DropDownListViewDemo"
+            android:name="com.noahedu.demo.activity.DropDownListViewDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/dropdownlistview_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.BorderScrollViewDemo"
+            android:name="com.noahedu.demo.activity.BorderScrollViewDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/borderscrollview_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.SearchViewDemo"
+            android:name="com.noahedu.demo.activity.SearchViewDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/search_view_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.ViewPagerMulTiFragmentDemo"
+            android:name="com.noahedu.demo.activity.ViewPagerMulTiFragmentDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/view_pager_multi_fragment_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.SlideOnePageGalleryDemo"
+            android:name="com.noahedu.demo.activity.SlideOnePageGalleryDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/slide_one_page_gallery_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.ViewPagerDemo"
+            android:name="com.noahedu.demo.activity.ViewPagerDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/view_pager_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.BroadcastReceiverDemo"
+            android:name="com.noahedu.demo.activity.BroadcastReceiverDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/broadcastreceiver_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity
-            android:name="com.noahedu.demo.ServiceDemo"
+            android:name="com.noahedu.demo.activity.ServiceDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/service_demo_activity_title"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity  
-            android:name="com.noahedu.demo.ImageFilterDemo"
+            android:name="com.noahedu.demo.activity.ImageFilterDemo"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_image_filter"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+
+        <activity
+            android:name="com.noahedu.demo.activity.ImageFilterTest"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_image_filter"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         
         <activity  
-            android:name="com.noahedu.demo.LoadBitmapDemo"
+            android:name="com.noahedu.demo.activity.LoadBitmapDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_image_filter"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         
         <activity  
-            android:name="com.noahedu.demo.DownloadFileDemo"
+            android:name="com.noahedu.demo.activity.DownloadFileDemo"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
-        <activity android:name="com.noahedu.demo.DingDangActivity"
+        <activity android:name="com.noahedu.demo.activity.DingDangActivity"
              android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
-        <activity android:name="com.noahedu.demo.TTSActivity"
-             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/desc_Download_File_View"
-            android:theme="@android:style/Theme.Holo.Light" >
-        </activity>
-
-        <activity android:name="com.noahedu.baidu.tts.sample.BaiduTTSActivity"
+        <activity android:name="com.noahedu.demo.activity.TTSActivity"
              android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
 
-        <activity
-            android:name="com.noahedu.baidu.tts.sample.SynthActivity"
-            android:label="离在线语音合成" />
-        <activity
-            android:name="com.noahedu.baidu.tts.sample.MiniActivity"
-            android:label="精简版合成" />
-        <activity
-            android:name="com.noahedu.baidu.tts.sample.SaveFileActivity"
-            android:label="保存合成后的音频" />
 
-        <activity android:name="com.noahedu.demo.AppListActivity"
+        <activity android:name="com.noahedu.demo.activity.PersionHealthActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_Download_File_View"
+            android:theme="@android:style/Theme.Holo.Light" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file"/>
+                <data android:scheme="content"/>
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.bin"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.noahedu.demo.activity.PersionHealthListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_Download_File_View"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+        <activity android:name="com.noahedu.demo.activity.PersionHealthRecylerActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
 
-        <activity android:name="com.noahedu.demo.AppActivity"
+        <activity android:name="com.noahedu.demo.activity.OkhttpActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
 
-        <activity android:name="com.noahedu.demo.XQEActivity"
+        <activity android:name="com.noahedu.demo.activity.AppActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_Download_File_View"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+
+        <activity android:name="com.noahedu.demo.activity.XQEActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_Download_File_View"
             android:theme="@android:style/Theme.Holo.Light" >
@@ -218,20 +252,23 @@
             </intent-filter>-->
         </activity>
         <activity android:name="com.noahedu.gpuimage.activity.ActivityGallery" />
+        <activity android:name="com.noahedu.gpuimage.activity.ActivityVideo" />
         <activity
             android:name="com.noahedu.gpuimage.activity.ActivityCamera"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
+       <!-- -->
 
-        <activity android:name="com.noahedu.demo.WebViewActivity"
+        <activity android:name="com.noahedu.demo.activity.WebViewActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/desc_sudokupuzzle_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
 
-        <activity android:name="com.noahedu.audiorecorder.MainActivity"
+        <activity android:name="com.noahedu.audiorecorder.RecorderActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/desc_sudokupuzzle_View"
+            android:label="@string/desc_audiorecorder_View"
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
         <activity android:name="com.noahedu.audiorecorder.WaveActivity"
@@ -246,9 +283,19 @@
             android:theme="@android:style/Theme.Holo.Light" >
         </activity>
 
+        <activity android:name="com.noahedu.demo.activity.ClassActivity"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:label="@string/desc_class_View"
+                  android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
 
-        <activity android:name="com.noahedu.demo.PlayerActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        <activity android:name="com.noahedu.demo.activity.DingActivity"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:label="@string/desc_class_View"
+                  android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+        <activity android:name="com.noahedu.demo.activity.PlayerActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:label="@string/application_name"
             android:theme="@style/PlayerTheme">
@@ -266,8 +313,243 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
+        <!--frame animation -->
+        <activity android:name="com.noahedu.animation.FrameAnimationActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_class_View"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+
+        <activity android:name="com.noahedu.animation.FrameAnimationOne"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+
+        <activity android:name="com.noahedu.animation.FrameAnimationTwo"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+        <!--svga -->
+        <activity
+            android:name="com.noahedu.demo.svga.AnimationSvgaActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+        <activity android:name="com.noahedu.demo.svga.AnimationFromAssetsActivity" />
+        <activity android:name="com.noahedu.demo.svga.AnimationFromNetworkActivity" />
+        <activity android:name="com.noahedu.demo.svga.AnimationWithDynamicImageActivity" />
+        <activity android:name="com.noahedu.demo.svga.AnimationFromLayoutActivity" />
+        <activity android:name="com.noahedu.demo.svga.AnimationFromClickActivity" />
+        <activity android:name="com.noahedu.animation.RightMarkActivity" />
+        <activity android:name="com.noahedu.animation.path.activity.svg.SvgActivity" />
+
+
+        <!--animation webp gif Frescowebp-->
+        <activity android:name="com.noahedu.animation.AnimationMainActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="animation demo"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+        <activity android:name="com.noahedu.animation.WebPActivity" />
+        <activity android:name="com.noahedu.animation.GifActivity" />
+        <activity android:name="com.noahedu.animation.FrescoWebPActivity" />
+
+        <activity android:name="com.noahedu.countdowntimer.CountDownActivity"
+
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name="com.noahedu.countdowntimer.RecyclerViewActivity"
+
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <!--百度TTS-->
+        <!--<activity android:name="com.baidu.tts.sample.BaiduTTSActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/desc_Download_File_View"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+
+        <activity
+            android:name="com.baidu.tts.sample.SynthActivity"
+            android:label="离在线语音合成"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.tts.sample.MiniActivity"
+            android:label="精简版合成"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.tts.sample.SaveFileActivity"
+            android:label="保存合成后的音频"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>-->
+
+
+        <!--百度语音识别-->
+      <!--  <activity android:name="com.baidu.aip.asrwakeup3.BaiduActivityMain"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+&lt;!&ndash;            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>&ndash;&gt;
+        </activity>
+
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.recog.ActivityOnlineRecog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="在线识别"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.recog.ActivityOfflineRecog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="离线命令词"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.recog.ActivityNlu"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="在线和本地语义"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.recog.ActivityAllRecog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="全部识别"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.recog.ActivityUiDialog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="在线识别（带对话框界面）"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.mini.ActivityMyMiniRecog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="精简版识别"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.wakeup.ActivityWakeUp"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="唤醒词"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.wakeup.ActivityWakeUpRecog"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="唤醒后识别"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.mini.ActivityMyMiniWakeUp"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="精简版唤醒"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.baidu.aip.asrwakeup3.mini.ActivityMyMiniUnit"
+            android:configChanges="orientation|keyboardHidden|screenLayout"
+            android:label="精简版语义解析UNIT"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category
+                    android:name="com.baidu.speech.recognizerdemo.intent.category.SAMPLE_CODE"/>
+            </intent-filter>
+        </activity>-->
+
         <uses-library android:name="com.noahedu"
             android:required="false"/>
+
+
+        <meta-data
+            android:name="com.baidu.speech.APP_ID"
+            android:value="18833080"/>
+
+        <meta-data
+            android:name="com.baidu.speech.API_KEY"
+            android:value="GbeSKafU43bw0qBUWMaQeECs"/>
+        <meta-data
+            android:name="com.baidu.speech.SECRET_KEY"
+            android:value="tF906zApTPPhC8uMEGbkgc4UlMNtN4eM"/>
     </application>
 
 </manifest>

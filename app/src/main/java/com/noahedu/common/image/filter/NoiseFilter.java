@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * �����Ч
+ * 噪点特效
  * @author daizhj
  *
  */

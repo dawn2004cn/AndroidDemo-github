@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-
 #include "com_noahedu_person_health_engine_Engine.h"
 #include "swt_handler.h"
 #include "util.h"
@@ -13,8 +11,165 @@ static jobject convertWriterContent(JNIEnv *env,jclass clsPackageInfo ,jclass cl
 
 //共用
 char * getMediaPath(JNIEnv *env, const char * dir, const char * name,int type);
+char * getUftMediaPath(JNIEnv *env, const char * name);
 //共用
 void writeCacheData(const char * path, char * data, int length);
+
+const char *AUTH_KEY = "MySecretSignature";
+const char *PACKAGE_NAME = "com.noahedu.demo";
+const char *RELEASE_SIGN_MD5 = "2634EFD64B5CDD13A9CCA6049949D26E";
+
+/**
+ * getApplication
+ * @param env
+ * @return j_object
+ */
+static jobject getApplication(JNIEnv *env) {
+    jobject application = NULL;
+    jclass activity_thread_clz = env->FindClass("android/app/ActivityThread");
+    if (activity_thread_clz != NULL) {
+        jmethodID currentApplication = env->GetStaticMethodID(
+                activity_thread_clz, "currentApplication", "()Landroid/app/Application;");
+        if (currentApplication != NULL) {
+            application = env->CallStaticObjectMethod(activity_thread_clz, currentApplication);
+        }
+        env->DeleteLocalRef(activity_thread_clz);
+    }
+    return application;
+}
+
+/**
+ * HexToString
+ * @param source
+ * @param dest
+ * @param sourceLen
+ */
+static void ToHexStr(const char *source, char *dest, int sourceLen) {
+    short i;
+    char highByte, lowByte;
+
+    for (i = 0; i < sourceLen; i++) {
+        highByte = source[i] >> 4;
+        lowByte = (char) (source[i] & 0x0f);
+        highByte += 0x30;
+
+        if (highByte > 0x39) {
+            dest[i * 2] = (char) (highByte + 0x07);
+        } else {
+            dest[i * 2] = highByte;
+        }
+
+        lowByte += 0x30;
+        if (lowByte > 0x39) {
+            dest[i * 2 + 1] = (char) (lowByte + 0x07);
+        } else {
+            dest[i * 2 + 1] = lowByte;
+        }
+    }
+}
+
+/**
+ *
+ * byteArrayToMd5
+ * @param env
+ * @param source
+ * @return j_string
+ */
+static jstring ToMd5(JNIEnv *env, jbyteArray source) {
+    // MessageDigest
+    jclass classMessageDigest = env->FindClass("java/security/MessageDigest");
+    // MessageDigest.getInstance()
+    jmethodID midGetInstance = env->GetStaticMethodID(classMessageDigest, "getInstance",
+                                                      "(Ljava/lang/String;)Ljava/security/MessageDigest;");
+    // MessageDigest object
+    jobject objMessageDigest = env->CallStaticObjectMethod(classMessageDigest, midGetInstance,
+                                                           env->NewStringUTF("md5"));
+
+    jmethodID midUpdate = env->GetMethodID(classMessageDigest, "update", "([B)V");
+    env->CallVoidMethod(objMessageDigest, midUpdate, source);
+
+    // Digest
+    jmethodID midDigest = env->GetMethodID(classMessageDigest, "digest", "()[B");
+    jbyteArray objArraySign = (jbyteArray) env->CallObjectMethod(objMessageDigest, midDigest);
+
+    jsize intArrayLength = env->GetArrayLength(objArraySign);
+    jbyte *byte_array_elements = env->GetByteArrayElements(objArraySign, NULL);
+    size_t length = (size_t) intArrayLength * 2 + 1;
+    char *char_result = (char *) malloc(length);
+    memset(char_result, 0, length);
+
+    ToHexStr((const char *) byte_array_elements, char_result, intArrayLength);
+    // 在末尾补\0
+    *(char_result + intArrayLength * 2) = '\0';
+
+    jstring stringResult = env->NewStringUTF(char_result);
+    // release
+    env->ReleaseByteArrayElements(objArraySign, byte_array_elements, JNI_ABORT);
+    // 指针
+    free(char_result);
+
+    return stringResult;
+}
+
+/*
+ * Class:     com_noahedu_person_health_engine_Engine
+ * Method:    nativeGetSignature
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_noahedu_person_health_engine_Engine_nativeGetSignature(JNIEnv * env, jclass thiz)
+{
+
+     jobject context = getApplication(env);
+     // 获得Context类
+     jclass cls = env->GetObjectClass(context);
+     // 得到getPackageManager方法的ID
+     jmethodID mid = env->GetMethodID(cls, "getPackageManager",
+                                      "()Landroid/content/pm/PackageManager;");
+
+     // 获得应用包的管理器
+     jobject pm = env->CallObjectMethod(context, mid);
+
+     // 得到getPackageName方法的ID
+     mid = env->GetMethodID(cls, "getPackageName", "()Ljava/lang/String;");
+     // 获得当前应用包名
+     jstring packageName = (jstring) env->CallObjectMethod(context, mid);
+     const char *c_pack_name = env->GetStringUTFChars(packageName, NULL);
+
+     // 比较包名,若不一致，直接return包名
+     if (strcmp(c_pack_name, PACKAGE_NAME) != 0) {
+         return (env)->NewStringUTF(c_pack_name);
+     }
+     // 获得PackageManager类
+     cls = env->GetObjectClass(pm);
+     // 得到getPackageInfo方法的ID
+     mid = env->GetMethodID(cls, "getPackageInfo",
+                            "(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;");
+     // 获得应用包的信息
+     jobject packageInfo = env->CallObjectMethod(pm, mid, packageName, 0x40); //GET_SIGNATURES = 64;
+     // 获得PackageInfo 类
+     cls = env->GetObjectClass(packageInfo);
+     // 获得签名数组属性的ID
+     jfieldID fid = env->GetFieldID(cls, "signatures", "[Landroid/content/pm/Signature;");
+     // 得到签名数组
+     jobjectArray signatures = (jobjectArray) env->GetObjectField(packageInfo, fid);
+     // 得到签名
+     jobject signature = env->GetObjectArrayElement(signatures, 0);
+
+     // 获得Signature类
+     cls = env->GetObjectClass(signature);
+     mid = env->GetMethodID(cls, "toByteArray", "()[B");
+     // 当前应用签名信息
+     jbyteArray signatureByteArray = (jbyteArray) env->CallObjectMethod(signature, mid);
+     //转成jstring
+     jstring str = ToMd5(env, signatureByteArray);
+     char *c_msg = (char *) env->GetStringUTFChars(str, 0);
+
+     if (strcmp(c_msg, RELEASE_SIGN_MD5) == 0) {
+         return (env)->NewStringUTF(AUTH_KEY);
+     } else {
+         return (env)->NewStringUTF(c_msg);
+     }
+ }
 /*
  * Class:     com_noahedu_person_health_engine_Engine
  * Method:    nativeOpenPackages
@@ -146,37 +301,48 @@ static jobject convertWriterContent(JNIEnv *env,jclass clsPackageInfo ,jclass cl
 	}
 
 	jobjectArray contents = env->NewObjectArray(t_writer->itemCount, clsItem, NULL);
-	LOGW("convertWriterContent  line is %d!\n", __LINE__);
+	LOGW("convertWriterContent t_writer->itemCount= %d, line is %d!\n", t_writer->itemCount,__LINE__);
 	for(uint i=0; i < t_writer->itemCount; i++) {
 
-		LOGW("convertWriterContent  content is %d!\n", __LINE__);
+		LOGW("convertWriterContent  t_writer->itemOrder = %d,i=%d,content is %d!\n",t_writer->itemOrder, i,__LINE__);
 		T_Item * media = GetChildrenItem(handler,t_writer->itemCount,t_writer->itemOrder,i);
 		media->cacheFile = getMediaPath(env,cachefile,media->name,media->pic->type);
 
-		LOGW("convertWriterContent  content is %d!\n", __LINE__);
+		LOGW("convertWriterContent  content is cacheFile %s, %d!\n",media->cacheFile, __LINE__);
 		if(media != NULL) {
 			LOGW("convertWriterContent  content is %d!\n", __LINE__);
 
 			jobject objMedia = env->AllocObject(clsItem);
+			LOGW("convertWriterContent  content is %d!\n", __LINE__);
 			if(objMedia != NULL) {
 				env->SetIntField(objMedia, fldstage, media->stage);
+				LOGW("convertWriterContent  content is %d!\n", __LINE__);
 				env->SetIntField(objMedia, fldquestNum, media->questCount);
+				LOGW("convertWriterContent  content is %d!\n", __LINE__);
 				env->SetIntField(objMedia, fldquestOrder, media->questOrder);
+				LOGW("convertWriterContent  name is %s,%d!\n", media->name,__LINE__);
 				env->SetObjectField(objMedia, fldname, GBK2UTF8(env, media->name));
 				env->SetObjectField(objMedia, fldVideoId, GBK2UTF8(env, media->videoId));
 				env->SetObjectField(objMedia, fldItemCache, GBK2UTF8(env, media->cacheFile));
+				LOGW("convertWriterContent  content is %d!\n", __LINE__);
 				env->SetIntField(objMedia, fldItemLogoAddr, media->picAddr);
 
+				LOGW("convertWriterContent  content is %d!\n", __LINE__);
 				if(media->pic != NULL)
 				{
-					writeCacheData(media->cacheFile,media->pic->pic,media->pic->len);
+					LOGW("convertWriterContent  writeCacheData is cacheFile:%s,%d!\n", media->cacheFile,__LINE__);
+					writeCacheData(getUftMediaPath(env,media->cacheFile),media->pic->pic,media->pic->len);
 					LOGW("convertWriterContent  writeCacheData is %d!\n", __LINE__);
 					jbyteArray logo = copyArray(env, (char *)media->pic->pic,media->pic->len);
+					LOGW("convertWriterContent  writeCacheData is %d!\n", __LINE__);
 					env->SetObjectField(objMedia,fldItemlogo,logo);
+					LOGW("convertWriterContent  writeCacheData is %d!\n", __LINE__);
 					env->SetIntField(objMedia,fldItemtype,media->pic->type);
+					LOGW("convertWriterContent  writeCacheData is %d!\n", __LINE__);
 					env->DeleteLocalRef(logo);//删除局部引用
+					LOGW("convertWriterContent  writeCacheData is %d!\n", __LINE__);
 				}
-				LOGD("convertWriterContent  name:%s,videoId:%s\n",GBK2UTF8(env, media->name), GBK2UTF8(env, media->videoId));
+				LOGD("convertWriterContent  name:%s,videoId:%s\n", media->name, media->videoId);
 			}
 
 			env->SetObjectArrayElement(contents, i, objMedia);
@@ -292,7 +458,7 @@ char * getMediaPath(JNIEnv *env, const char * dir, const char * name,int type)
 
 	const char * suffix = env->GetStringUTFChars(jsuffix, NULL);
 
-	const int len = dirLen + strlen(utfName)+strlen(suffix)+ 2;
+	const int len = dirLen + strlen(utfName)+strlen(suffix)+ 10;
 	path = (char *)MALLOC(len);
 	if(path == NULL) {
 		OOM(len);
@@ -302,13 +468,50 @@ char * getMediaPath(JNIEnv *env, const char * dir, const char * name,int type)
 	memset(path, 0, len);
 
 	if(dir[dirLen-1] == '/') {
-		sprintf(path, "%s%s%s", dir, utfName,suffix);
+		sprintf(path, "%s%s%s", dir, name,tmp);
 	} else {
-		sprintf(path, "%s/%s%s", dir, utfName,suffix);
+		sprintf(path, "%s/%s%s", dir, name,tmp);
 	}
 
 	LOGD("path:%s\n", path);
-	env->ReleaseStringUTFChars(jsuffix,tmp);
+	env->ReleaseStringUTFChars(jsuffix,suffix);
+	env->ReleaseStringUTFChars(strName, utfName);
+
+	return path;
+}
+
+
+/*
+ *转换名字为Utf编码
+ *name
+ *dir
+ */
+char * getUftMediaPath(JNIEnv *env, const char * name)
+{
+	char * path = NULL;
+
+	jstring strName = GBK2UTF8(env, name);
+
+	const char * utfName = env->GetStringUTFChars(strName, NULL);
+
+	const int dirLen = strlen(utfName);
+	if(dirLen <= 0) {
+		LOGW("Dir is empty!");
+		return NULL;
+	}
+
+	const int len = strlen(utfName)+10;
+	path = (char *)MALLOC(len);
+	if(path == NULL) {
+		OOM(len);
+		return NULL;
+	}
+
+	memset(path, 0, len);
+	memcpy(path,utfName,len);
+
+
+	LOGD("path:%s\n", path);
 	env->ReleaseStringUTFChars(strName, utfName);
 
 	return path;

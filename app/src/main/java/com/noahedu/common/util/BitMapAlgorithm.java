@@ -74,7 +74,7 @@ public class BitMapAlgorithm {
     
     
     public void display(int row){
-        System.out.println("BitMap位图展示");
+        LogUtils.v("BitMap位图展示");
         for(int i=0;i<row;i++){
             List<Integer> list = new ArrayList<Integer>();
             int temp = bits[i];
@@ -82,7 +82,7 @@ public class BitMapAlgorithm {
                 list.add(temp & 1);
                 temp >>= 1;
             }
-            System.out.println("a["+i+"]" + list);
+            LogUtils.v("a["+i+"]" + list);
         }
     }
 
@@ -95,7 +95,7 @@ public class BitMapAlgorithm {
 
         int temp = 120;
         if(map.contains(temp)){
-            System.out.println("temp:" + temp + "has already exists");
+            LogUtils.v("temp:" + temp + "has already exists");
         }
         map.display(5);
     }

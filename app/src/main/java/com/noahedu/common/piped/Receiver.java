@@ -1,5 +1,7 @@
 package com.noahedu.common.piped;
 
+import com.noahedu.common.util.LogUtils;
+
 import java.io.IOException;
 import java.io.PipedInputStream;
 
@@ -29,7 +31,7 @@ public class Receiver extends Thread {
         byte[] buf = new byte[2048];
         try {
             int len = in.read(buf);
-            System.out.println(new String(buf,0,len));
+            LogUtils.v(new String(buf,0,len));
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,7 +45,7 @@ public class Receiver extends Thread {
             try {
                 int len = in.read(buf);
                 total += len;
-                System.out.println(new String(buf,0,len));
+                LogUtils.v(new String(buf,0,len));
                 // 若读取的字节总数>1024，则退出循环。
                 if (total > 1024)
                     break;

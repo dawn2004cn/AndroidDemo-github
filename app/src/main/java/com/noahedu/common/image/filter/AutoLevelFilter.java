@@ -19,7 +19,7 @@
 package com.noahedu.common.image.filter;
 
 /**
- * �Զ�У��Ч��
+ * 自动校正效果
  * @author daizhj
  *
  */
@@ -134,7 +134,7 @@ public class AutoLevelFilter implements IImageFilter{
 		        imageIn.setPixelColor(x, y, r, g, b);
 		 	 }
 	    }
-	    return imageIn;//��ֱ��ͼģʽ��ǿ
+	    return imageIn;//做直方图模式增强
 	}
 
 }

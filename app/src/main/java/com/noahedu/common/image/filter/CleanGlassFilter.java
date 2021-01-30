@@ -20,7 +20,7 @@ package com.noahedu.common.image.filter;
 
 
 /**
- * ��ɨ����Ч��
+ * 清扫玻璃效果
  * @author daizhj
  *
  */
@@ -72,7 +72,7 @@ public class CleanGlassFilter implements IImageFilter{
                 if (distSq > min)
                 {
                     int k = NoiseFilter.getRandomInt(1, 123456);
-                    //���ؿ��С
+                    //像素块大小
                     int pixeldx = x + k % 19;
                     int pixeldy = y + k % 19;
                     if (pixeldx >= width)

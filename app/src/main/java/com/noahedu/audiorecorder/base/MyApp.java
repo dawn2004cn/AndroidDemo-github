@@ -1,17 +1,14 @@
 package com.noahedu.audiorecorder.base;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.noahedu.common.http.network.RetrofitFactory;
-import com.noahedu.demo.BuildConfig;
 import com.noahedu.recorderlib.recorder.wav.WavUtils;
 import com.noahedu.recorderlib.utils.ByteUtils;
 import com.noahedu.recorderlib.utils.Logger;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.sql.DataSource;
+import org.apache.ibatis.MybatisCommon;
 
 
 /**
@@ -45,9 +42,20 @@ public class MyApp extends Application {
 
         Logger.d("zlwTest", "Wav1: %s", ByteUtils.toString(header1));
         Logger.d("zlwTest", "Wav2: %s", ByteUtils.toString(header2));
+
+        MybatisCommon.init(this);
+
+
+
     }
 
     public static MyApp getInstance() {
         return instance;
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+    }
+
 }

@@ -19,14 +19,14 @@
 package com.noahedu.common.image.filter;
 
 /**
- * ͶӰЧ��
+ * 投影效果
  * @author daizhj
  *
  */
 public class ReflectionFilter  implements IImageFilter{
 
 	/**
-	 * ˮƽͶӰ?
+	 * 水平投影?
 	 */
 	public boolean IsHorizontal = true;
 	public float Offset = 0.5f;//0.8

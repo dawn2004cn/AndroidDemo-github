@@ -9,13 +9,12 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noahedu.audiorecorder.base.MyApp;
-import com.noahedu.demo.BaseActivity;
+import com.noahedu.demo.activity.BaseActivity;
 import com.noahedu.demo.R;
 import com.noahedu.recorderlib.RecordManager;
 import com.noahedu.recorderlib.recorder.RecordConfig;

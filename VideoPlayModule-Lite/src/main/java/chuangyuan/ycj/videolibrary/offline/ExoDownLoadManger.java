@@ -82,7 +82,7 @@ public class ExoDownLoadManger {
      * Returns whether extension renderers should be used.
      */
     public boolean useExtensionRenderers() {
-        return "withExtensions".equals(BuildConfig.FLAVOR);
+        return "withExtensions".equals("");
     }
 
     /****

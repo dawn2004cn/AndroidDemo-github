@@ -1,16 +1,17 @@
 package com.noahedu.demo.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.noahedu.demo.R;
+
+import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,32 +25,62 @@ import java.util.List;
  * @create time 2020/4/3$ 10:42$
  */
 public abstract class QuickAdapter<T> extends BaseAdapter {
-    private Context mContext;
     private List<T> mData;
     private int mLayoutId;
     private QuickMultiSupport<T> mSupport;
     private boolean isRecycler;
     private int mPosition;
+    private Context context;
 
-    public QuickAdapter(Context context, List<T> data, int layoutId) {
-        this.mContext = context;
-        this.mData = data == null ? new ArrayList<T>() : new ArrayList<T>(data);
-        this.mLayoutId = layoutId;
+    private OnItemClickListener mOnItemClickListener = null;
+
+    //define interface
+    public static interface OnItemClickListener {
+        void onItemClick(View view , int position);
     }
 
-    public QuickAdapter(Context context, List<T> data, QuickMultiSupport<T> support) {
-        this(context, data, 0);
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mOnItemClickListener = listener;
+    }
+
+    public QuickAdapter(Context ctx,int layoutId) {
+        this(ctx,layoutId,null,null);
+    }
+
+    public QuickAdapter(Context ctx,int layoutId,List<T> data) {
+        this(ctx,layoutId,data,null);
+    }
+
+    public QuickAdapter(Context ctx,List<T> data, QuickMultiSupport<T> support) {
+        this(ctx,0,data,support);
+    }
+
+    public QuickAdapter(Context ctx,int layoutId, QuickMultiSupport<T> support) {
+        this(ctx,layoutId,null,support);
+    }
+
+    public QuickAdapter(Context ctx,QuickMultiSupport<T> support) {
+        this(ctx,0,null,support);
+    }
+
+    public QuickAdapter(Context ctx,int layoutId, List<T> data,QuickMultiSupport<T> support) {
+        this.context = ctx;
+        this.mLayoutId = layoutId;
+        this.mData = data == null ? new ArrayList<T>() : new ArrayList<T>(data);
         this.mSupport = support;
     }
 
     @Override
     public int getCount() {
-        return mData.size();
+        return mData != null ? mData.size() : 0;
     }
 
     @Override
     public T getItem(int position) {
-        return mData.get(position);
+        if(mData != null) {
+            return mData.get(position);
+        }
+        return  null;
     }
 
     @Override
@@ -92,7 +123,7 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
     @NonNull
     private QuickViewHolder createListHolder(ViewGroup parent, int layoutId) {
         QuickViewHolder holder;
-        View itemView = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(layoutId, parent, false);
         holder = new QuickViewHolder(itemView, layoutId);
         itemView.setTag(holder);
         return holder;
@@ -131,10 +162,16 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
         // 如果是多条目，viewType就是布局ID
         View view;
         if (mSupport != null) {
+            Object tagPosition = parent.getTag(R.id.view_position);
             int layoutId = mSupport.getLayoutId(mData.get(mPosition));
-            view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+            // 如果是滚动布局
+            if (tagPosition != null) {
+                int position = (int) tagPosition;
+                layoutId = mSupport.getLayoutId(mData.get(position));
+            }
+            view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         } else {
-            view = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
+            view = LayoutInflater.from(context).inflate(mLayoutId, parent, false);
         }
 
         QuickViewHolder holder = new QuickViewHolder(view);
@@ -152,7 +189,10 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        if(mData != null) {
+            return mData.size();
+        }
+        return 0;
     }
 
     @Override
@@ -207,43 +247,59 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
 
     //==========================================数据相关================================================
     public void add(T elem) {
-        mData.add(elem);
+        if(mData != null) {
+            mData.add(elem);
+        }
         notifyData();
 
     }
     public void addAll(List<T> data) {
-        mData.addAll(data);
+        if(mData != null) {
+            mData.addAll(data);
+        }
         notifyData();
     }
 
     public void addFirst(T elem) {
-        mData.add(0, elem);
+        if(mData != null) {
+            mData.add(0, elem);
+        }
         notifyData();
     }
 
     public void set(T oldElem, T newElem) {
-        set(mData.indexOf(oldElem), newElem);
+        if(mData != null) {
+            set(mData.indexOf(oldElem), newElem);
+        }
         notifyData();
     }
 
     public void set(int index, T elem) {
-        mData.set(index, elem);
+        if(mData != null) {
+            mData.set(index, elem);
+        }
         notify();
     }
 
     public void remove(T elem) {
-        mData.remove(elem);
+        if(mData != null) {
+            mData.remove(elem);
+        }
         notifyData();
     }
 
     public void remove(int index) {
-        mData.remove(index);
+        if(mData != null) {
+            mData.remove(index);
+        }
         notifyData();
     }
 
     public void replaceAll(List<T> elem) {
-        mData.clear();
-        mData.addAll(elem);
+        if(mData != null) {
+            mData.clear();
+            mData.addAll(elem);
+        }
         notifyData();
     }
 
@@ -251,7 +307,14 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
      * 清除
      */
     public void clear() {
-        mData.clear();
+        if(mData != null) {
+            mData.clear();
+        }
+        notifyData();
+    }
+
+    public void setData(List<T> data) {
+        this.mData = data;
         notifyData();
     }
 
@@ -263,7 +326,13 @@ public abstract class QuickAdapter<T> extends BaseAdapter {
         }
     }
 
+    public boolean contains(T elem) {
+        return mData.contains(elem);
+    }
+
+
     public List<T> getData() {
         return mData;
     }
+
 }
