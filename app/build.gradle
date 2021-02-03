@@ -119,6 +119,7 @@ dependencies {
     implementation project (':mybatis')
     implementation project(':VideoPlayModule')
     implementation project(':latexlibrary')
+    implementation project(':base_lib_common')
 //    implementation project(':baidu_asr_core')
 //    implementation project(':baidu_uiasr')
 //    implementation project(':baidu_uidialog')
@@ -165,7 +166,7 @@ dependencies {
     implementation files('libs/converter-scalars-2.6.0.jar')
     implementation files('libs/klog.jar')
     implementation files('libs/bakersynthesizer.jar')
-    implementation files('libs/fmath-mathml-java-v3.1.jar')
+   // implementation files('libs/fmath-mathml-java-v3.1.jar')
     //implementation files('libs/disruptor-3.4.2.jar')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

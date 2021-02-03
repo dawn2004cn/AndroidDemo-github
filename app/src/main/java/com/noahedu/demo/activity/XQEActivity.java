@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aispeech.vod.xqe.VodXqe;
-import com.noahedu.common.util.AssetsFileUtils;
+import com.noahedu.utils.AssetsFileUtils;
 import com.noahedu.demo.R;
 import com.noahedu.demo.utils.XQEBean;
 

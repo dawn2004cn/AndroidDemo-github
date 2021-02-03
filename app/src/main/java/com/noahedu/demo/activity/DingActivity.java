@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.noahedu.common.http.network.RequestResult;
-import com.noahedu.common.util.AssetsFileUtils;
+import com.noahedu.utils.AssetsFileUtils;
 import com.noahedu.common.util.LogUtils;
 import com.noahedu.common.util.StringUtils;
 import com.noahedu.demo.R;
