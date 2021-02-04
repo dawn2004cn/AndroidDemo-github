@@ -74,6 +74,22 @@ static inline void rotate(Mat srcImg, float degree, int stride) {
     }
 }
 
+static inline void mirror(Mat srcImg, int flag, int stride) {
+    Mat finalImg;
+    if (flag == 0 ) {
+        flip(srcImg, finalImg, 0);
+    } else if (flag == 1) {
+        flip(srcImg, finalImg, 1);
+    } else {
+        return;
+    }
+    memcpy(srcImg.data, finalImg.data,
+           static_cast<size_t>(finalImg.rows * finalImg.cols * stride));
+
+    if (!finalImg.empty()) {
+        finalImg.release();
+    }
+}
 void opencvRotateRGB(unsigned char *src, int width, int height, float degree) {
     Mat srcImg(height, width, CV_8UC3, src);
     rotate(srcImg, degree, 3);
@@ -104,4 +120,13 @@ void opencvNormalize(unsigned char *src, unsigned char *dst, int width, int heig
     //cvtColor(srcImg, dstImg, CV_YUV2RGBA_NV21);
     //srcImg.convertTo(dstImg, CV_32F, 1.0 / 255, 0);
     cv::normalize(srcImg,dstImg,-1, 1, cv::NORM_MINMAX);
+}
+void opencvMirrorRGBA(unsigned char *src, int width, int height, int flag){
+    Mat srcImg(height, width, CV_8UC4, src);
+    mirror(srcImg, flag, 4);
+}
+
+void opencvMirrorRGB(unsigned char *src, int width, int height, int flag){
+    Mat srcImg(height, width, CV_8UC3, src);
+    mirror(srcImg, flag, 3);
 }

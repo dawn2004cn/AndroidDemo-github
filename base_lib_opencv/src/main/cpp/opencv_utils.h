@@ -36,6 +36,11 @@ void opencvRotateRGBA(unsigned char *src, int width, int height, float degree);
 
 void opencvRotateYUV420P(unsigned char *src, int width, int height, float degree);
 
+void opencvMirrorRGB(unsigned char *src, int width, int height, int flag);
+void opencvMirrorRGBA(unsigned char *src, int width, int height, int flag);
+
+void opencvNormalize(unsigned char *src, unsigned char *dst, int width, int height);
+
 #ifdef __cplusplus
 }
 #endif

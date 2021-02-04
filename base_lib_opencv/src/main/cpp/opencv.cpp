@@ -4,7 +4,7 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_I420ToRGBA(JNIEnv *env, jclass clazz,
+Java_com_libopencv_util_OpencvUtils_I420ToRGBA(JNIEnv *env, jclass clazz,
                                            jbyteArray src, jbyteArray dst,
                                            jint width, jint height) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
@@ -17,7 +17,7 @@ Java_com_qxt_yuv420_OpencvUtils_I420ToRGBA(JNIEnv *env, jclass clazz,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_YV12ToRGBA(JNIEnv *env, jclass clazz,
+Java_com_libopencv_util_OpencvUtils_YV12ToRGBA(JNIEnv *env, jclass clazz,
                                            jbyteArray src, jbyteArray dst,
                                            jint width, jint height) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
@@ -30,7 +30,7 @@ Java_com_qxt_yuv420_OpencvUtils_YV12ToRGBA(JNIEnv *env, jclass clazz,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_NV12ToRGBA(JNIEnv *env, jclass clazz,
+Java_com_libopencv_util_OpencvUtils_NV12ToRGBA(JNIEnv *env, jclass clazz,
                                            jbyteArray src, jbyteArray dst,
                                            jint width, jint height) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
@@ -43,7 +43,7 @@ Java_com_qxt_yuv420_OpencvUtils_NV12ToRGBA(JNIEnv *env, jclass clazz,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_NV21ToRGBA(JNIEnv *env, jclass clazz,
+Java_com_libopencv_util_OpencvUtils_NV21ToRGBA(JNIEnv *env, jclass clazz,
                                            jbyteArray src, jbyteArray dst,
                                            jint width, jint height) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
@@ -56,7 +56,7 @@ Java_com_qxt_yuv420_OpencvUtils_NV21ToRGBA(JNIEnv *env, jclass clazz,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_rotateRGB(JNIEnv *env, jclass clazz, jbyteArray src,
+Java_com_libopencv_util_OpencvUtils_rotateRGB(JNIEnv *env, jclass clazz, jbyteArray src,
                                           jint width, jint height, jfloat degree) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
     opencvRotateRGB(reinterpret_cast<unsigned char *>(_src), width, height, degree);
@@ -65,7 +65,7 @@ Java_com_qxt_yuv420_OpencvUtils_rotateRGB(JNIEnv *env, jclass clazz, jbyteArray 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_rotateRGBA(JNIEnv *env, jclass clazz, jbyteArray src,
+Java_com_libopencv_util_OpencvUtils_rotateRGBA(JNIEnv *env, jclass clazz, jbyteArray src,
                                            jint width, jint height, jfloat degree) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
     opencvRotateRGBA(reinterpret_cast<unsigned char *>(_src), width, height, degree);
@@ -74,7 +74,7 @@ Java_com_qxt_yuv420_OpencvUtils_rotateRGBA(JNIEnv *env, jclass clazz, jbyteArray
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_rotateYUV420P(JNIEnv *env, jclass clazz, jbyteArray src,
+Java_com_libopencv_util_OpencvUtils_rotateYUV420P(JNIEnv *env, jclass clazz, jbyteArray src,
                                               jint width, jint height, jfloat degree) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
     opencvRotateYUV420P(reinterpret_cast<unsigned char *>(_src), width, height, degree);
@@ -83,7 +83,7 @@ Java_com_qxt_yuv420_OpencvUtils_rotateYUV420P(JNIEnv *env, jclass clazz, jbyteAr
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_qxt_yuv420_OpencvUtils_normalize(JNIEnv *env, jclass clazz, jbyteArray src,
+Java_com_libopencv_util_OpencvUtils_normalize(JNIEnv *env, jclass clazz, jbyteArray src,
                                               jbyteArray dst,
                                               jint width, jint height) {
     jbyte *_src = env->GetByteArrayElements(src, nullptr);
@@ -91,4 +91,13 @@ Java_com_qxt_yuv420_OpencvUtils_normalize(JNIEnv *env, jclass clazz, jbyteArray 
 
     env->ReleaseByteArrayElements(src, _src, 0);
     env->ReleaseByteArrayElements(dst, _dst, 0);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_libopencv_util_OpencvUtils_mirrorRGBA(JNIEnv *env, jclass clazz, jbyteArray src,
+                                               jint width, jint height, jint flag) {
+    jbyte *_src = env->GetByteArrayElements(src, nullptr);
+    opencvMirrorRGBA(reinterpret_cast<unsigned char *>(_src), width, height, flag);
+    env->ReleaseByteArrayElements(src, _src, 0);
 }

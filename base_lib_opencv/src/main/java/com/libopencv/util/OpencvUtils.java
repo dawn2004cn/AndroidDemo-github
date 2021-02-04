@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.libyuv.util;
+package com.libopencv.util;
 
 
 /**
@@ -95,4 +95,14 @@ public class OpencvUtils {
      * @param degree The rotate degree, must be 90.0f or 180.0f or 270.0f.
      */
     public static native void rotateYUV420P(byte[] src, int width, int height, float degree);
+
+    /**
+     * mirror rgb image
+     *
+     * @param src    The input array.
+     * @param width  The width of image.
+     * @param height The height of image.
+     * @param flag  0 Vertically 1 Horizontally.
+     */
+    public static native void mirrorRGBA(byte[] src, int width, int height, int flag);
 }
